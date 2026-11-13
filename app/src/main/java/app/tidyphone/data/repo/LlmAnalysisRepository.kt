@@ -86,7 +86,13 @@ data class AnalysisState(
     val finishedSuggestions: Int? = null,
     val skippedBatches: Int = 0,
     val dropped: Int = 0,
+    /** The run failed as a whole. */
     val error: String? = null,
+    /** Technical note about a partly successful run (shown small, not as an error). */
+    val detail: String? = null,
+    val albums: Boolean = false,
+    /** Albums the model didn't name, so they got an on-device name. */
+    val deviceNamedAlbums: Int = 0,
 )
 
 /** Prepares (with a cost estimate) and runs LLM analysis; results become LLM plan items. */
@@ -178,7 +184,7 @@ class LlmAnalysisRepository @Inject constructor(
             AnalysisState(
                 running = false, progress = _state.value.progress, finishedSuggestions = r.items.size,
                 skippedBatches = r.skippedBatches, dropped = r.droppedSuggestions.size,
-                error = if (r.skippedBatches > 0) r.lastError else null,
+                detail = if (r.skippedBatches > 0) r.lastError else null,
             )
         } catch (e: CancellationException) {
             _state.value = AnalysisState(running = false)
@@ -274,6 +280,7 @@ class LlmAnalysisRepository @Inject constructor(
         var outTok = 0
         var lastError: String? = null
         var covered = 0
+        var deviceNamed = 0
         val mediaTotal = plan.albumBatches.sumOf { b -> b.sumOf { it.items.size } }.coerceAtLeast(total.coerceAtMost(1))
 
         plan.albumBatches.forEachIndexed { index, batch ->
@@ -294,7 +301,8 @@ class LlmAnalysisRepository @Inject constructor(
                 var parts = AlbumPrompt.userParts(inputs, fa, zone)
                 for (attempt in 0..1) {
                     val r = try {
-                        provider.complete(LlmRequest(plan.system, parts, (batch.size * 80 + 1500).coerceAtMost(8000), schema))
+                        // Generous limit: Persian names cost more tokens, and newer models think before answering.
+                        provider.complete(LlmRequest(plan.system, parts, (batch.size * 200 + 6000).coerceAtMost(16_000), schema))
                     } catch (e: LlmException) {
                         lastError = e.message
                         if (e.status == 401 || e.status == 403) throw e
@@ -303,8 +311,9 @@ class LlmAnalysisRepository @Inject constructor(
                     inTok += r.inputTokens ?: 0
                     outTok += r.outputTokens ?: 0
                     names = AlbumSchema.parse(r.text, guard)
-                    if (names != null) break
-                    lastError = "invalid album JSON"
+                    if (names != null && names.isNotEmpty()) break
+                    names = null
+                    lastError = if (r.truncated) "answer was cut off" else "invalid album JSON"
                     parts = parts + LlmPart.Text(PromptBuilder.repairMessage("invalid JSON"))
                 }
                 if (names == null) skippedBatches++
@@ -312,7 +321,7 @@ class LlmAnalysisRepository @Inject constructor(
             // Any album the model didn't name (or every album, without AI) gets an on-device name.
             val byId = names.orEmpty().associateBy { it.id }
             val items = inputs.flatMap { input ->
-                val name = byId[input.cluster.id] ?: AlbumFallback.name(input, fa, zone)
+                val name = byId[input.cluster.id] ?: AlbumFallback.name(input, fa, zone).also { if (provider != null) deviceNamed++ }
                 mapper.map(input.cluster, name)
             }
             val paths = batch.flatMap { c -> c.items.map { it.path } }
@@ -325,7 +334,10 @@ class LlmAnalysisRepository @Inject constructor(
         }
         val done = LlmProgress(plan.albumBatches.size, plan.albumBatches.size, covered, mediaTotal, suggestions, skippedBatches, inTok, outTok, lastError)
         onProgress(done)
-        AnalysisState(running = false, progress = done, finishedSuggestions = suggestions, skippedBatches = skippedBatches, error = if (skippedBatches > 0) lastError else null)
+        AnalysisState(
+            running = false, progress = done, finishedSuggestions = suggestions, skippedBatches = skippedBatches,
+            albums = true, deviceNamedAlbums = deviceNamed, detail = if (skippedBatches > 0 || deviceNamed > 0) lastError else null,
+        )
     } catch (e: CancellationException) {
         _state.value = AnalysisState(running = false)
         throw e
@@ -359,7 +371,7 @@ class LlmAnalysisRepository @Inject constructor(
     }
 
     private companion object {
-        const val ALBUMS_PER_REQUEST = 40
+        const val ALBUMS_PER_REQUEST = 25
         val PLACEHOLDER_TEXT = "x".repeat(PromptBuilder.MAX_SNIPPET)
     }
 }

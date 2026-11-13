@@ -84,9 +84,12 @@ object AlbumSchema {
 
     /** Returns valid names, or null if the answer is unusable as a whole. Invalid entries are dropped. */
     fun parse(raw: String, guard: PathGuard): List<AlbumName>? {
-        val text = SuggestionParser.extractJson(raw) ?: return null
-        val root = runCatching { Json.parseToJsonElement(text) as? JsonObject }.getOrNull() ?: return null
-        val arr = root["albums"] as? JsonArray ?: return null
+        val root = SuggestionParser.extractJson(raw)?.let { runCatching { Json.parseToJsonElement(it) as? JsonObject }.getOrNull() }
+        val arr = root?.get("albums") as? JsonArray
+            // Cut-off answer: keep the albums that came through complete.
+            ?: SuggestionParser.salvageArray(raw, "albums").mapNotNull { runCatching { Json.parseToJsonElement(it) }.getOrNull() }
+                .takeIf { it.isNotEmpty() }?.let { JsonArray(it) }
+            ?: return null
         return arr.mapNotNull { el ->
             if (JsonSchema.validate(el, itemSchema).isNotEmpty()) return@mapNotNull null
             val o = el.jsonObject

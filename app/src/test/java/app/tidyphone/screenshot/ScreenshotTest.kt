@@ -111,7 +111,11 @@ abstract class ScreenshotBase(private val mode: ThemeMode, private val prefix: S
         )
     }
     @Test fun reviewMove() = shot("5_review_move") {
-        ReviewList(planItems, ActionType.MOVE, {}, ROOT, AnalysisState(), dryRun = true, onToggle = {}, onGroup = { _, _ -> }, onPreview = {}, onCancelAnalysis = {}, onDismissAnalysis = {})
+        val album = (1..3).map { i ->
+            PlanItem(100L + i, "$ROOT/DCIM/Camera/IMG_2026081${i}_1200.jpg", ActionType.MOVE, PlanSource.LLM_ALBUM, 3 * MB, "سفر کیش · مرداد ۱۴۰۵", targetDir = "$ROOT/Pictures/Albums/۱۴۰۵-۰۵ سفر کیش", category = "photos")
+        }
+        ReviewList(planItems.filter { it.action == ActionType.MOVE } + album, ActionType.MOVE, {}, ROOT,
+            AnalysisState(finishedSuggestions = 614, skippedBatches = 1, albums = true, deviceNamedAlbums = 12, detail = "answer was cut off"), dryRun = false, onToggle = {}, onGroup = { _, _ -> }, onPreview = {}, onCancelAnalysis = {}, onDismissAnalysis = {})
     }
     @Test fun history() = shot("6_history") {
         HistoryContent(

@@ -29,6 +29,48 @@ object SuggestionParser {
     private val json = Json { isLenient = false }
 
     fun parse(raw: String): ParseResult {
+        val full = parseFull(raw)
+        if (full.fatalError == null) return full
+        // A cut-off answer still contains complete entries; keep those instead of throwing it all away.
+        val recovered = salvageArray(raw, "items")
+        if (recovered.isEmpty()) return full
+        val again = parseFull("{\"items\":[" + recovered.joinToString(",") + "]}")
+        return again.copy(itemErrors = again.itemErrors + "answer was cut off; recovered ${again.suggestions.size} entries")
+    }
+
+    /**
+     * Returns the complete JSON objects found inside the array under [key], even when the answer
+     * stops in the middle (e.g. at the token limit). Incomplete trailing objects are dropped.
+     */
+    fun salvageArray(raw: String, key: String): List<String> {
+        val keyAt = raw.indexOf("\"$key\"").takeIf { it >= 0 } ?: return emptyList()
+        val open = raw.indexOf('[', keyAt).takeIf { it >= 0 } ?: return emptyList()
+        val out = mutableListOf<String>()
+        var depth = 0
+        var start = -1
+        var inString = false
+        var escape = false
+        for (i in open + 1 until raw.length) {
+            val c = raw[i]
+            if (inString) {
+                when {
+                    escape -> escape = false
+                    c == '\\' -> escape = true
+                    c == '"' -> inString = false
+                }
+                continue
+            }
+            when (c) {
+                '"' -> inString = true
+                '{' -> { if (depth == 0) start = i; depth++ }
+                '}' -> { depth--; if (depth == 0 && start >= 0) { out += raw.substring(start, i + 1); start = -1 } }
+                ']' -> if (depth == 0) return out
+            }
+        }
+        return out
+    }
+
+    private fun parseFull(raw: String): ParseResult {
         val text = extractJson(raw) ?: return ParseResult(emptyList(), emptyList(), "no JSON object found")
         val root: JsonElement = try {
             json.parseToJsonElement(text)

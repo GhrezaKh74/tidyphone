@@ -350,4 +350,7 @@
     <string name="albums_card_title">آلبوم هوشمند عکس‌ها</string>
     <string name="albums_card_body">عکس‌ها و فیلم‌ها را بر اساس تاریخ و مکان در آلبوم سفرها و ماه‌ها مرتب کن.</string>
     <string name="set_albums_folder">پوشهٔ آلبوم‌های هوشمند</string>
+    <string name="albums_done">%1$s عکس و فیلم در آلبوم‌ها مرتب شد</string>
+    <string name="albums_device_named">برای %1$s آلبوم، چون پاسخ هوش مصنوعی ناقص بود، اسم روی گوشی ساخته شد</string>
+    <string name="review_will_organize">تغییرات انتخاب‌شده مرتب می‌کنند</string>
 </resources>

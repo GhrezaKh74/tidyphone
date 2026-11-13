@@ -58,6 +58,15 @@ class SuggestionParserTest {
         assertThat(r.itemErrors.single()).contains("longer than 240")
     }
 
+    @Test fun `complete entries are recovered from a cut-off answer`() {
+        val cut = "{\"items\":[${item(0)},${item(1)},{\"id\":2,\"category\":\"docu"
+        val r = SuggestionParser.parse(cut)
+        assertThat(r.fatalError).isNull()
+        assertThat(r.suggestions.map { it.id }).containsExactly(0, 1)
+        assertThat(r.itemErrors.last()).contains("cut off")
+        assertThat(SuggestionParser.parse("{\"items\":[{\"id\":0,\"cat").fatalError).isNotNull()
+    }
+
     @Test fun `api schema drops locally enforced keywords`() {
         val api = JsonSchema.forApi(SuggestionSchema.schema).toString()
         assertThat(api).doesNotContain("maxLength")

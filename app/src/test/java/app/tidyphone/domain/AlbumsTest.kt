@@ -103,6 +103,12 @@ class AlbumsTest {
         assertThat(AlbumSchema.parse("no json", guard)).isNull()
     }
 
+    @Test fun `albums are recovered from a cut-off answer`() {
+        val cut = "{\"albums\":[{\"id\":0,\"name\":\"سفر کیش\",\"folder\":\"۱۴۰۵-۰۵ کیش\"},{\"id\":1,\"name\":\"مرداد"
+        val r = AlbumSchema.parse(cut, guard)!!
+        assertThat(r.map { it.id }).containsExactly(0)
+    }
+
     @Test fun `mapper builds moves into the albums folder and respects the rules`() {
         val items = listOf(shot(t(2026, 8, 11), kish), shot(t(2026, 8, 12), kish, video = true))
         val cluster = MediaCluster(0, MediaCluster.Kind.TRIP, items)

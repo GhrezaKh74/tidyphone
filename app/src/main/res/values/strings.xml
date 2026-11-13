@@ -371,4 +371,7 @@
     <string name="albums_card_title">Smart photo albums</string>
     <string name="albums_card_body">Group photos and videos into trips and months by date and place.</string>
     <string name="set_albums_folder">Smart albums folder</string>
+    <string name="albums_done">%1$s photos and videos sorted into albums</string>
+    <string name="albums_device_named">%1$s albums were named on the device because the AI answer was incomplete</string>
+    <string name="review_will_organize">Selected changes will organize</string>
 </resources>

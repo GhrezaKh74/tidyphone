@@ -203,6 +203,12 @@ fun ReviewList(
     modifier: Modifier = Modifier,
 ) {
     val byAction = items.groupBy { it.action }
+    // If the open tab is empty but another has suggestions (e.g. right after albums), jump there.
+    androidx.compose.runtime.LaunchedEffect(byAction.keys) {
+        if (byAction[tab].isNullOrEmpty()) {
+            listOf(ActionType.DELETE, ActionType.MOVE, ActionType.RENAME).firstOrNull { !byAction[it].isNullOrEmpty() }?.let(onTab)
+        }
+    }
     val current = byAction[tab].orEmpty()
     val groups: List<Pair<String, List<PlanItem>>> = when (tab) {
         ActionType.DELETE -> current.groupBy { it.source }.toList().sortedBy { deleteOrder.indexOf(it.first) }
@@ -264,8 +270,13 @@ private fun SummaryCard(items: List<PlanItem>, dryRun: Boolean) {
     val renames = items.count { it.selected && it.action == ActionType.RENAME }
     Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(26.dp)).background(Brand.heroGradient).padding(20.dp)) {
         Column {
-            Text(stringResource(R.string.review_will_free), style = MaterialTheme.typography.labelLarge, color = Color.White.copy(alpha = .85f))
-            Text(bytes(deletes.sumOf { it.size }), style = MaterialTheme.typography.displaySmall, color = Color.White)
+            if (deletes.isEmpty() && moves + renames > 0) {
+                Text(stringResource(R.string.review_will_organize), style = MaterialTheme.typography.labelLarge, color = Color.White.copy(alpha = .85f))
+                Text(androidx.compose.ui.res.pluralStringResource(R.plurals.n_files, moves + renames, number(moves + renames)), style = MaterialTheme.typography.displaySmall, color = Color.White)
+            } else {
+                Text(stringResource(R.string.review_will_free), style = MaterialTheme.typography.labelLarge, color = Color.White.copy(alpha = .85f))
+                Text(bytes(deletes.sumOf { it.size }), style = MaterialTheme.typography.displaySmall, color = Color.White)
+            }
             Spacer(Modifier.height(10.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Chip(Icons.Rounded.DeleteSweep, number(deletes.size))
@@ -379,13 +390,17 @@ private fun AnalysisStatusCard(a: AnalysisState, onCancel: () -> Unit, onDismiss
     TidyCard(Modifier.fillMaxWidth().animateContentSize()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (a.running) CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.5.dp)
-            else Icon(if (a.error != null) Icons.Rounded.Close else Icons.Rounded.AutoAwesome, null, tint = if (a.error != null) MaterialTheme.colorScheme.error else Brand.Mint)
+            else {
+                val failed = a.finishedSuggestions == null && a.error != null
+                Icon(if (failed) Icons.Rounded.Close else Icons.Rounded.AutoAwesome, null, tint = if (failed) MaterialTheme.colorScheme.error else Brand.Mint)
+            }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 val p = a.progress
                 Text(
                     when {
                         a.running -> stringResource(R.string.ai_running)
+                        a.finishedSuggestions != null && a.albums -> stringResource(R.string.albums_done, number(a.finishedSuggestions))
                         a.finishedSuggestions != null -> stringResource(R.string.ai_done, number(a.finishedSuggestions))
                         else -> stringResource(R.string.ai_failed)
                     },
@@ -394,10 +409,13 @@ private fun AnalysisStatusCard(a: AnalysisState, onCancel: () -> Unit, onDismiss
                 if (p != null && a.running) {
                     Text(stringResource(R.string.ai_progress, number(p.filesDone), number(p.filesTotal), number(p.batchIndex + 1), number(p.batchCount)), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                if (!a.running && a.skippedBatches > 0) {
+                if (!a.running && a.albums && a.deviceNamedAlbums > 0) {
+                    Text(stringResource(R.string.albums_device_named, number(a.deviceNamedAlbums)), style = MaterialTheme.typography.labelSmall, color = Brand.Amber)
+                } else if (!a.running && a.skippedBatches > 0) {
                     Text(stringResource(R.string.ai_skipped, number(a.skippedBatches)), style = MaterialTheme.typography.labelSmall, color = Brand.Amber)
                 }
                 a.error?.let { Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error, maxLines = 3) }
+                if (a.error == null && !(a.albums && a.deviceNamedAlbums > 0)) a.detail?.let { Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2) }
             }
             if (a.running) TextButton(onClick = onCancel) { Text(stringResource(R.string.cancel)) }
             else IconButton(onClick = onDismiss) { Icon(Icons.Rounded.Close, stringResource(R.string.close)) }
