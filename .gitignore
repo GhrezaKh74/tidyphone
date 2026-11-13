@@ -11,3 +11,4 @@ build/
 !/docs/**/*.apk
 *.keystore
 *.jks
+docs/screenshots/*.png

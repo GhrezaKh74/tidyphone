@@ -76,8 +76,8 @@ private val pages = listOf(
 )
 
 @Composable
-fun OnboardingScreen(permissionGranted: Boolean, onDone: () -> Unit) {
-    val pager = rememberPagerState { pages.size + 1 }
+fun OnboardingScreen(permissionGranted: Boolean, onDone: () -> Unit, startAtPermission: Boolean = false) {
+    val pager = rememberPagerState(initialPage = if (startAtPermission) pages.size else 0) { pages.size + 1 }
     val scope = rememberCoroutineScope()
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         GlowBackground()

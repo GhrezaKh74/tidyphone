@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -82,7 +83,7 @@ import app.tidyphone.ui.components.reasonText
 import app.tidyphone.ui.theme.Brand
 
 @Composable
-fun ReviewScreen(onOpenSettings: () -> Unit, vm: ReviewViewModel = hiltViewModel()) {
+fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: ReviewViewModel = hiltViewModel()) {
     val items by vm.items.collectAsStateWithLifecycle()
     val analysis by vm.analysisState.collectAsStateWithLifecycle()
     val exec by vm.exec.collectAsStateWithLifecycle()
@@ -93,6 +94,13 @@ fun ReviewScreen(onOpenSettings: () -> Unit, vm: ReviewViewModel = hiltViewModel
     var preview by remember { mutableStateOf<PlanItem?>(null) }
     var confirm by remember { mutableStateOf(false) }
     var needKey by remember { mutableStateOf(false) }
+    var aiHandled by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(openAi) {
+        if (openAi && !aiHandled) {
+            aiHandled = true
+            if (vm.hasKey()) vm.openAnalysis() else needKey = true
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         GlowBackground()

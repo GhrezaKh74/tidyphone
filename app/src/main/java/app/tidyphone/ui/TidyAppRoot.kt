@@ -38,6 +38,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import app.tidyphone.R
 import app.tidyphone.ui.dashboard.DashboardScreen
 import app.tidyphone.ui.history.HistoryScreen
@@ -62,7 +63,7 @@ private data class Tab(val route: Any, val cls: KClass<*>, val icon: ImageVector
 
 private val tabs = listOf(
     Tab(HomeRoute, HomeRoute::class, Icons.Rounded.Home, R.string.nav_home),
-    Tab(ReviewRoute, ReviewRoute::class, Icons.Rounded.Checklist, R.string.nav_review),
+    Tab(ReviewRoute(), ReviewRoute::class, Icons.Rounded.Checklist, R.string.nav_review),
     Tab(HistoryRoute, HistoryRoute::class, Icons.Rounded.History, R.string.nav_history),
     Tab(TrashRoute, TrashRoute::class, Icons.Rounded.AutoDelete, R.string.nav_trash),
     Tab(SettingsRoute, SettingsRoute::class, Icons.Rounded.Tune, R.string.nav_settings),
@@ -118,6 +119,7 @@ fun TidyAppRoot(permissionGranted: Boolean, vm: AppViewModel = hiltViewModel()) 
                     composable<OnboardingRoute> {
                         OnboardingScreen(
                             permissionGranted = permissionGranted,
+                            startAtPermission = s.onboardingDone,
                             onDone = {
                                 vm.completeOnboarding()
                                 nav.navigate(HomeRoute) { popUpTo(OnboardingRoute) { inclusive = true } }
@@ -127,7 +129,8 @@ fun TidyAppRoot(permissionGranted: Boolean, vm: AppViewModel = hiltViewModel()) 
                     composable<HomeRoute> {
                         DashboardScreen(
                             onScan = { nav.navigate(ScanRoute) },
-                            onReview = { nav.navigate(ReviewRoute) { launchSingleTop = true } },
+                            onReview = { nav.navigate(ReviewRoute()) { launchSingleTop = true } },
+                            onAi = { nav.navigate(ReviewRoute(openAi = true)) { launchSingleTop = true } },
                             onSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } },
                         )
                     }
@@ -139,10 +142,10 @@ fun TidyAppRoot(permissionGranted: Boolean, vm: AppViewModel = hiltViewModel()) 
                     ) {
                         ScanScreen(
                             onClose = { nav.popBackStack() },
-                            onReview = { nav.navigate(ReviewRoute) { popUpTo(HomeRoute) } },
+                            onReview = { nav.navigate(ReviewRoute()) { popUpTo(HomeRoute) } },
                         )
                     }
-                    composable<ReviewRoute> { ReviewScreen(onOpenSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } }) }
+                    composable<ReviewRoute> { e -> ReviewScreen(openAi = e.toRoute<ReviewRoute>().openAi, onOpenSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } }) }
                     composable<HistoryRoute> { HistoryScreen() }
                     composable<TrashRoute> { TrashScreen() }
                     composable<SettingsRoute> { SettingsScreen(onOpenRules = { nav.navigate(RulesRoute) }) }

@@ -67,14 +67,14 @@ import app.tidyphone.ui.components.percent
 import app.tidyphone.ui.theme.Brand
 
 @Composable
-fun DashboardScreen(onScan: () -> Unit, onReview: () -> Unit, onSettings: () -> Unit, vm: DashboardViewModel = hiltViewModel()) {
+fun DashboardScreen(onScan: () -> Unit, onReview: () -> Unit, onAi: () -> Unit, onSettings: () -> Unit, vm: DashboardViewModel = hiltViewModel()) {
     val s by vm.state.collectAsStateWithLifecycle()
     LifecycleResumeEffect(Unit) { vm.refreshStorage(); onPauseOrDispose { } }
-    DashboardContent(s, onScan = { vm.scan(); onScan() }, onReview = onReview, onSettings = onSettings)
+    DashboardContent(s, onScan = { vm.scan(); onScan() }, onReview = onReview, onSettings = onSettings, onAi = onAi)
 }
 
 @Composable
-fun DashboardContent(s: DashboardState, onScan: () -> Unit, onReview: () -> Unit, onSettings: () -> Unit) {
+fun DashboardContent(s: DashboardState, onScan: () -> Unit, onReview: () -> Unit, onSettings: () -> Unit, onAi: () -> Unit = onReview) {
     Box(Modifier.fillMaxSize()) {
         GlowBackground()
         LazyColumn(
@@ -103,7 +103,7 @@ fun DashboardContent(s: DashboardState, onScan: () -> Unit, onReview: () -> Unit
                     GhostButton(
                         text = stringResource(R.string.dash_ai),
                         icon = Icons.Rounded.AutoAwesome,
-                        onClick = onReview,
+                        onClick = onAi,
                         modifier = Modifier.weight(1f),
                         enabled = s.indexedFiles > 0,
                     )
