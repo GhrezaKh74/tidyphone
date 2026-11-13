@@ -132,6 +132,22 @@ abstract class ScreenshotBase(private val mode: ThemeMode, private val prefix: S
             30, ROOT, {}, {}, {},
         )
     }
+    @Test fun apps() = shot("9_apps") {
+        fun a(name: String, days: Long, size: Long, game: Boolean = false, state: app.tidyphone.domain.apps.UsageState = app.tidyphone.domain.apps.UsageState.UNUSED) =
+            app.tidyphone.domain.apps.AppUsage(app.tidyphone.domain.apps.InstalledApp("pkg.$name", name, game, 0, null, size), state, days)
+        app.tidyphone.ui.apps.AppsContent(
+            app.tidyphone.ui.apps.AppsUi(
+                loading = false, thresholdDays = 60, selected = setOf("pkg.Racing Legends", "pkg.Old Bank"),
+                apps = listOf(
+                    a("Racing Legends", 210, 3 * GB, game = true),
+                    a("Old Bank", 160, 180 * MB),
+                    a("Photo Editor Pro", 95, 420 * MB, state = app.tidyphone.domain.apps.UsageState.NEVER_OPENED),
+                    a("Puzzle Quest", 75, 1 * GB, game = true),
+                ),
+            ),
+            {}, {}, {}, {}, {}, {}, { _, _ -> }, {},
+        )
+    }
     @Test fun settings() = shot("8_settings") {
         SettingsContent(settings, mapOf(ProviderType.ANTHROPIC to true), TestState.Ok("claude-opus-5-5 · 840 ms · \"OK\""), {}, { _, _ -> }, {}, {}, {})
     }

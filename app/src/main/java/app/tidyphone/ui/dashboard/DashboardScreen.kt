@@ -27,6 +27,7 @@ import androidx.compose.material.icons.rounded.Android
 import androidx.compose.material.icons.rounded.HourglassBottom
 import androidx.compose.material.icons.rounded.Radar
 import androidx.compose.material.icons.rounded.Screenshot
+import androidx.compose.material.icons.rounded.SportsEsports
 import androidx.compose.material.icons.rounded.Straighten
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.Icon
@@ -67,15 +68,15 @@ import app.tidyphone.ui.components.percent
 import app.tidyphone.ui.theme.Brand
 
 @Composable
-fun DashboardScreen(onScan: () -> Unit, onReview: () -> Unit, onAi: () -> Unit, onSettings: () -> Unit, vm: DashboardViewModel = hiltViewModel()) {
+fun DashboardScreen(onScan: () -> Unit, onReview: () -> Unit, onAi: () -> Unit, onSettings: () -> Unit, onApps: () -> Unit = {}, vm: DashboardViewModel = hiltViewModel()) {
     val s by vm.state.collectAsStateWithLifecycle()
     LifecycleResumeEffect(Unit) { vm.refreshStorage(); onPauseOrDispose { } }
     val withNotifications = app.tidyphone.ui.rememberWithNotificationPermission()
-    DashboardContent(s, onScan = { withNotifications { vm.scan(); onScan() } }, onReview = onReview, onSettings = onSettings, onAi = onAi)
+    DashboardContent(s, onScan = { withNotifications { vm.scan(); onScan() } }, onReview = onReview, onSettings = onSettings, onAi = onAi, onApps = onApps)
 }
 
 @Composable
-fun DashboardContent(s: DashboardState, onScan: () -> Unit, onReview: () -> Unit, onSettings: () -> Unit, onAi: () -> Unit = onReview) {
+fun DashboardContent(s: DashboardState, onScan: () -> Unit, onReview: () -> Unit, onSettings: () -> Unit, onAi: () -> Unit = onReview, onApps: () -> Unit = {}) {
     Box(Modifier.fillMaxSize()) {
         GlowBackground()
         LazyColumn(
@@ -113,6 +114,7 @@ fun DashboardContent(s: DashboardState, onScan: () -> Unit, onReview: () -> Unit
             item {
                 AnimatedVisibility(s.pendingActions > 0 || s.reclaimableBytes > 0) { ReadyCard(s, onReview) }
             }
+            item { AppsCard(s.apps, onApps) }
             if (s.insights.any { it.count > 0 }) {
                 item { SectionTitle(stringResource(R.string.dash_insights)) }
                 item { InsightsGrid(s.insights, onReview) }
@@ -248,6 +250,25 @@ private fun FirstScanCard(onScan: () -> Unit) {
                 Text(stringResource(R.string.dash_first_title), style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(R.string.dash_first_body), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
+        }
+    }
+}
+
+@Composable
+private fun AppsCard(summary: app.tidyphone.data.repo.AppsSummary?, onClick: () -> Unit) {
+    TidyCard(Modifier.fillMaxWidth(), onClick = onClick) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconBadge(Icons.Rounded.SportsEsports, Brand.Coral)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.apps_card_title), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    if (summary == null) stringResource(R.string.apps_card_body)
+                    else androidx.compose.ui.res.pluralStringResource(R.plurals.apps_card_summary, summary.unusedCount, number(summary.unusedCount), bytes(summary.unusedBytes)),
+                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, tint = MaterialTheme.colorScheme.primary)
         }
     }
 }

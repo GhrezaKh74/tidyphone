@@ -31,6 +31,7 @@ data class DashboardState(
     val pendingActions: Int = 0,
     val moves: Int = 0,
     val insights: List<Insight> = emptyList(),
+    val apps: app.tidyphone.data.repo.AppsSummary? = null,
     val loaded: Boolean = false,
 )
 
@@ -39,10 +40,12 @@ class DashboardViewModel @Inject constructor(
     private val index: IndexRepository,
     plan: PlanRepository,
     private val scans: ScanRepository,
+    private val appsRepo: app.tidyphone.data.repo.AppsRepository,
+    private val settingsRepo: app.tidyphone.data.settings.SettingsRepository,
 ) : ViewModel() {
     private val storage = MutableStateFlow(StorageStats(0, 0))
 
-    val state: StateFlow<DashboardState> = combine(storage, index.categoryTotals, index.fileCount, scans.state, plan.items) { st, cats, count, scan, items ->
+    private val base = combine(storage, index.categoryTotals, index.fileCount, scans.state, plan.items) { st, cats, count, scan, items ->
         val bySource = items.filter { it.action == ActionType.DELETE }.groupBy { it.source }
         DashboardState(
             storage = st,
@@ -56,9 +59,18 @@ class DashboardViewModel @Inject constructor(
                 .map { s -> bySource[s].orEmpty().let { Insight(s, it.size, it.sumOf { i -> i.size }) } },
             loaded = true,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DashboardState())
+    }
 
-    init { refreshStorage() }
+    val state: StateFlow<DashboardState> = combine(base, appsRepo.summary) { s, apps -> s.copy(apps = apps) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DashboardState())
+
+    init {
+        refreshStorage()
+        // Fill the unused-apps card in the background when usage access is already granted.
+        viewModelScope.launch(Dispatchers.IO) {
+            if (appsRepo.summary.value == null && appsRepo.hasUsageAccess()) runCatching { appsRepo.load(settingsRepo.current().unusedAppDays) }
+        }
+    }
 
     fun refreshStorage() = viewModelScope.launch(Dispatchers.IO) { storage.value = index.storage() }
 

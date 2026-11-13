@@ -23,6 +23,7 @@ data class AppSettings(
     val oldDownloadDays: Int = 90,
     val oldScreenshotDays: Int = 60,
     val trashRetentionDays: Int = 30,
+    val unusedAppDays: Int = 60,
     val dryRun: Boolean = false,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
 ) {

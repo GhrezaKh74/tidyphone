@@ -277,4 +277,64 @@
         <item quantity="one">%1$s پیشنهاد ردشده</item>
         <item quantity="other">%1$s پیشنهاد ردشده</item>
     </plurals>
+    <string name="apps_title">برنامه‌های بی‌استفاده</string>
+    <string name="apps_card_title">برنامه‌ها و بازی‌های بی‌استفاده</string>
+    <string name="apps_card_body">برنامه‌هایی را که ماه‌هاست باز نکرده‌ای پیدا و حذف کن.</string>
+    <string name="apps_access_title">اجازهٔ دسترسی به آمار استفاده</string>
+    <string name="apps_access_body">برای اینکه بفهمد هر برنامه آخرین بار کی باز شده، تایدی‌فون به «دسترسی به آمار استفاده» در اندروید نیاز دارد. TidyPhone را در فهرست پیدا و روشن کن. این اطلاعات روی گوشی می‌ماند.</string>
+    <string name="apps_access_grant">باز کردن تنظیمات دسترسی</string>
+    <string name="apps_can_free">با حذفشان آزاد می‌شود</string>
+    <string name="apps_threshold">حداقل مدت بی‌استفاده</string>
+    <string name="apps_games_only">فقط بازی‌ها</string>
+    <string name="apps_show_all">نمایش همهٔ برنامه‌ها</string>
+    <string name="apps_none_title">برنامهٔ بی‌استفاده‌ای نیست</string>
+    <string name="apps_none_body">همهٔ برنامه‌ها اخیراً استفاده شده‌اند. مدت کوتاه‌تری انتخاب کن یا همه را نمایش بده.</string>
+    <string name="apps_select_unused">انتخاب همه</string>
+    <string name="apps_select_none">لغو انتخاب</string>
+    <string name="apps_used_today">امروز استفاده شده</string>
+    <string name="apps_game">بازی</string>
+    <string name="apps_uninstall">حذف نصب</string>
+    <string name="apps_frees">حدود %1$s آزاد می‌شود</string>
+    <string name="apps_uninstall_body">اندروید برای هر برنامه جداگانه تأیید می‌خواهد. حذف نصب، برنامه و داده‌هایش (حدود %1$s) را پاک می‌کند و از داخل تایدی‌فون قابل بازگردانی نیست.</string>
+    <string name="apps_freed">حدود %1$s آزاد شد.</string>
+    <plurals name="apps_uninstall_q">
+        <item quantity="one">%1$s برنامه حذف نصب شود؟</item>
+        <item quantity="other">%1$s برنامه حذف نصب شود؟</item>
+    </plurals>
+    <plurals name="apps_uninstalled">
+        <item quantity="one">%1$s برنامه حذف نصب شد</item>
+        <item quantity="other">%1$s برنامه حذف نصب شد</item>
+    </plurals>
+    <plurals name="apps_unused_count">
+        <item quantity="one">%1$s برنامه بیش از %2$s روز استفاده نشده</item>
+        <item quantity="other">%1$s برنامه بیش از %2$s روز استفاده نشده</item>
+    </plurals>
+    <plurals name="days_n">
+        <item quantity="one">%1$s روز</item>
+        <item quantity="other">%1$s روز</item>
+    </plurals>
+    <plurals name="apps_listed">
+        <item quantity="one">%1$s برنامه</item>
+        <item quantity="other">%1$s برنامه</item>
+    </plurals>
+    <plurals name="apps_selected">
+        <item quantity="one">%1$s برنامه انتخاب شده</item>
+        <item quantity="other">%1$s برنامه انتخاب شده</item>
+    </plurals>
+    <plurals name="apps_last_used">
+        <item quantity="one">آخرین استفاده: %1$s روز پیش</item>
+        <item quantity="other">آخرین استفاده: %1$s روز پیش</item>
+    </plurals>
+    <plurals name="apps_never_opened">
+        <item quantity="one">از زمان نصب باز نشده (%1$s روز)</item>
+        <item quantity="other">از زمان نصب باز نشده (%1$s روز)</item>
+    </plurals>
+    <plurals name="apps_not_in_history">
+        <item quantity="one">در %1$s روز گذشته استفاده نشده</item>
+        <item quantity="other">در %1$s روز گذشته استفاده نشده</item>
+    </plurals>
+    <plurals name="apps_card_summary">
+        <item quantity="one">%1$s برنامهٔ بی‌استفاده · %2$s</item>
+        <item quantity="other">%1$s برنامهٔ بی‌استفاده · %2$s</item>
+    </plurals>
 </resources>

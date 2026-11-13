@@ -10,3 +10,4 @@ import kotlinx.serialization.Serializable
 @Serializable data object SettingsRoute
 @Serializable data object ScanRoute
 @Serializable data object RulesRoute
+@Serializable data object AppsRoute

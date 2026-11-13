@@ -142,6 +142,7 @@ fun TidyAppRoot(
                             onScan = { nav.navigate(ScanRoute) },
                             onReview = { nav.navigate(ReviewRoute()) { launchSingleTop = true } },
                             onAi = { nav.navigate(ReviewRoute(openAi = true)) { launchSingleTop = true } },
+                            onApps = { nav.navigate(app.tidyphone.ui.nav.AppsRoute) { launchSingleTop = true } },
                             onSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } },
                         )
                     }
@@ -161,6 +162,7 @@ fun TidyAppRoot(
                     composable<TrashRoute> { TrashScreen() }
                     composable<SettingsRoute> { SettingsScreen(onOpenRules = { nav.navigate(RulesRoute) }) }
                     composable<RulesRoute> { RulesScreen(onBack = { nav.popBackStack() }) }
+                    composable<app.tidyphone.ui.nav.AppsRoute> { app.tidyphone.ui.apps.AppsScreen(onBack = { nav.popBackStack() }) }
                 }
             }
         }

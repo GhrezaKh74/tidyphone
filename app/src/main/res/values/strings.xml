@@ -298,4 +298,64 @@
         <item quantity="one">%1$s skipped suggestion</item>
         <item quantity="other">%1$s skipped suggestions</item>
     </plurals>
+    <string name="apps_title">Unused apps</string>
+    <string name="apps_card_title">Unused apps &amp; games</string>
+    <string name="apps_card_body">Find apps you haven’t opened in months and uninstall them.</string>
+    <string name="apps_access_title">Allow usage access</string>
+    <string name="apps_access_body">To see when each app was last opened, TidyPhone needs Android’s “Usage access”. Find TidyPhone in the list and turn it on. This information stays on your phone.</string>
+    <string name="apps_access_grant">Open usage access settings</string>
+    <string name="apps_can_free">can be freed by uninstalling them</string>
+    <string name="apps_threshold">Unused for at least</string>
+    <string name="apps_games_only">Games only</string>
+    <string name="apps_show_all">Show all apps</string>
+    <string name="apps_none_title">No unused apps</string>
+    <string name="apps_none_body">Every app was used recently. Try a shorter period or show all apps.</string>
+    <string name="apps_select_unused">Select all</string>
+    <string name="apps_select_none">Select none</string>
+    <string name="apps_used_today">Used today</string>
+    <string name="apps_game">Game</string>
+    <string name="apps_uninstall">Uninstall</string>
+    <string name="apps_frees">Frees about %1$s</string>
+    <string name="apps_uninstall_body">Android will ask you to confirm each app. Uninstalling removes the app and its data (about %1$s) and can’t be undone from TidyPhone.</string>
+    <string name="apps_freed">About %1$s freed.</string>
+    <plurals name="apps_uninstall_q">
+        <item quantity="one">Uninstall %1$s app?</item>
+        <item quantity="other">Uninstall %1$s apps?</item>
+    </plurals>
+    <plurals name="apps_uninstalled">
+        <item quantity="one">%1$s app uninstalled</item>
+        <item quantity="other">%1$s apps uninstalled</item>
+    </plurals>
+    <plurals name="apps_unused_count">
+        <item quantity="one">%1$s app unused for %2$s+ days</item>
+        <item quantity="other">%1$s apps unused for %2$s+ days</item>
+    </plurals>
+    <plurals name="days_n">
+        <item quantity="one">%1$s day</item>
+        <item quantity="other">%1$s days</item>
+    </plurals>
+    <plurals name="apps_listed">
+        <item quantity="one">%1$s app</item>
+        <item quantity="other">%1$s apps</item>
+    </plurals>
+    <plurals name="apps_selected">
+        <item quantity="one">%1$s app selected</item>
+        <item quantity="other">%1$s apps selected</item>
+    </plurals>
+    <plurals name="apps_last_used">
+        <item quantity="one">Last used %1$s day ago</item>
+        <item quantity="other">Last used %1$s days ago</item>
+    </plurals>
+    <plurals name="apps_never_opened">
+        <item quantity="one">Never opened since install (%1$s day)</item>
+        <item quantity="other">Never opened since install (%1$s days)</item>
+    </plurals>
+    <plurals name="apps_not_in_history">
+        <item quantity="one">Not used in the last %1$s day</item>
+        <item quantity="other">Not used in the last %1$s days</item>
+    </plurals>
+    <plurals name="apps_card_summary">
+        <item quantity="one">%1$s unused app · %2$s</item>
+        <item quantity="other">%1$s unused apps · %2$s</item>
+    </plurals>
 </resources>
