@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">TidyPhone</string>
+    <string name="notif_channel_scan">Storage scan</string>
+    <string name="notif_scanning">Scanning your storage…</string>
 </resources>

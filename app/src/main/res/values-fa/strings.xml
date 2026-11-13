@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_channel_scan">اسکن حافظه</string>
+    <string name="notif_scanning">در حال اسکن حافظه…</string>
+</resources>
