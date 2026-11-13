@@ -48,6 +48,7 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
     }
 
     packaging {
@@ -108,4 +109,23 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.ktor.client.mock)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
+}
+
+// Screenshot tests (Robolectric + Roborazzi) are slow and download Android jars, so they only run
+// with -Pscreenshots: ./gradlew testDebugUnitTest -Pscreenshots --tests '*ScreenshotTest*'
+tasks.withType<Test>().configureEach {
+    if (project.hasProperty("screenshots")) {
+        systemProperty("roborazzi.test.record", "true")
+        systemProperty("roborazzi.output.dir", rootProject.file("docs/screenshots").absolutePath)
+    } else {
+        exclude("**/screenshot/**")
+    }
+    maxHeapSize = "3g"
+    jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED", "--add-opens=java.base/java.lang=ALL-UNNAMED", "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
 }

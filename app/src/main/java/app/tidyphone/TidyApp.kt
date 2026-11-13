@@ -7,7 +7,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class TidyApp : Application(), Configuration.Provider {
+class TidyApp : Application(), Configuration.Provider, coil3.SingletonImageLoader.Factory {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
 
@@ -15,6 +15,11 @@ class TidyApp : Application(), Configuration.Provider {
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(android.util.Log.WARN)
+            .build()
+
+    override fun newImageLoader(context: coil3.PlatformContext): coil3.ImageLoader =
+        coil3.ImageLoader.Builder(context)
+            .components { add(coil3.video.VideoFrameDecoder.Factory()) }
             .build()
 
     override fun onCreate() {

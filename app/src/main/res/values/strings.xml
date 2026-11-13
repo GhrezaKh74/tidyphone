@@ -1,6 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">TidyPhone</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="done">Done</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="undo">Undo</string>
+    <string name="undo_all">Undo all</string>
+    <string name="undone">Undone</string>
+    <string name="restore">Restore</string>
+    <string name="delete_forever">Delete forever</string>
+    <string name="delete_forever_q">Delete this file forever?</string>
+    <string name="open_settings">Open settings</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_review">Review</string>
+    <string name="nav_history">History</string>
+    <string name="nav_trash">Trash</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Notifications -->
     <string name="notif_channel_scan">Storage scan</string>
     <string name="notif_scanning">Scanning your storage…</string>
+
+    <!-- Onboarding -->
+    <string name="onb1_title">See what\'s filling your phone</string>
+    <string name="onb1_body">TidyPhone indexes your Downloads, photos, documents and chat media, then finds duplicates, junk and forgotten big files right on your device.</string>
+    <string name="onb2_title">Let AI sort the mess</string>
+    <string name="onb2_body">Your own AI model (Claude, OpenAI, OpenRouter, Ollama…) suggests folders, clean names and what is safe to remove, using only file names, sizes and dates.</string>
+    <string name="onb3_title">Nothing happens without you</string>
+    <string name="onb3_body">You review every change. Deleted files go to a Trash you control, and every action can be undone from History.</string>
+    <string name="perm_title">Allow access to your files</string>
+    <string name="perm_body">To find duplicates and move files between folders, TidyPhone needs Android\'s \"All files access\". You\'ll be taken to system settings: turn it on for TidyPhone, then come back.</string>
+    <string name="perm_point_review">Every delete, move and rename waits for your approval.</string>
+    <string name="perm_point_protected">System folders, Android/data, Android/obb and your excluded folders are never touched.</string>
+    <string name="perm_point_metadata">The AI receives metadata only, unless you opt in to content analysis for a run.</string>
+    <string name="perm_grant">Grant access</string>
+    <string name="perm_granted">Access granted</string>
+    <string name="get_started">Get started</string>
+    <string name="perm_denied_title">Access is still off</string>
+    <string name="perm_denied_body">TidyPhone can\'t see your files without it. You can turn it on any time in Settings › Apps › TidyPhone › All files access.</string>
+
+    <!-- Dashboard -->
+    <string name="dash_hello">Your storage at a glance</string>
+    <string name="dash_storage">Storage used</string>
+    <string name="dash_used">used</string>
+    <string name="dash_of_total">of %1$s</string>
+    <string name="dash_free">%1$s free</string>
+    <string name="dash_scan">Scan now</string>
+    <string name="dash_scanning">Scanning…</string>
+    <string name="dash_ai">AI organize</string>
+    <string name="dash_ready_title">Cleanup plan ready</string>
+    <string name="dash_ready_body">Free %1$s · %2$s actions selected</string>
+    <string name="dash_insights">Found on your phone</string>
+    <string name="dash_by_category">Space by category</string>
+    <string name="dash_first_title">Run your first scan</string>
+    <string name="dash_first_body">It takes a minute and stays on your phone.</string>
+
+    <!-- Categories -->
+    <string name="cat_images">Images</string>
+    <string name="cat_videos">Videos</string>
+    <string name="cat_audio">Audio</string>
+    <string name="cat_documents">Documents</string>
+    <string name="cat_archives">Archives</string>
+    <string name="cat_apks">APKs</string>
+    <string name="cat_other">Other</string>
+
+    <!-- Suggestion sources -->
+    <string name="src_duplicates">Duplicates</string>
+    <string name="src_large">Large files</string>
+    <string name="src_old_downloads">Old downloads</string>
+    <string name="src_apks">Leftover APKs</string>
+    <string name="src_empty_folders">Empty folders</string>
+    <string name="src_temp">Temporary files</string>
+    <string name="src_old_screenshots">Old screenshots</string>
+    <string name="src_ai">AI suggestion</string>
+
+    <!-- AI categories -->
+    <string name="llmcat_photos">Photos</string>
+    <string name="llmcat_screenshots">Screenshots</string>
+    <string name="llmcat_videos">Videos</string>
+    <string name="llmcat_music">Music</string>
+    <string name="llmcat_voice">Voice notes</string>
+    <string name="llmcat_documents">Documents</string>
+    <string name="llmcat_finance">Finance</string>
+    <string name="llmcat_work">Work</string>
+    <string name="llmcat_study">Study</string>
+    <string name="llmcat_books">Books</string>
+    <string name="llmcat_archives">Archives</string>
+    <string name="llmcat_apps">Apps</string>
+    <string name="llmcat_social">Social media</string>
+    <string name="llmcat_memes">Memes &amp; stickers</string>
+    <string name="llmcat_other">Other</string>
+
+    <!-- Reasons -->
+    <string name="reason_duplicate">Exact copy of %1$s</string>
+    <string name="reason_large">Large file, check if you still need it</string>
+    <string name="reason_old_download">In Downloads, untouched for %1$d days</string>
+    <string name="reason_apk">Installer file; the app is installed or no longer needed</string>
+    <string name="reason_empty_folder">Empty folder</string>
+    <string name="reason_temp">Temporary or unfinished download</string>
+    <string name="reason_old_screenshot">Screenshot from %1$d days ago</string>
+
+    <!-- Scan -->
+    <string name="scan_title">Scanning</string>
+    <string name="scan_files_found">files found · %1$s</string>
+    <string name="scan_done_title">All done</string>
+    <string name="scan_done_body">%1$s files · %2$s indexed</string>
+    <string name="scan_step_index">Indexing files</string>
+    <string name="scan_step_hash">Finding exact duplicates</string>
+    <string name="scan_step_analyze">Building suggestions</string>
+    <string name="scan_summary">%1$s suggestions · up to %2$s to free</string>
+    <string name="scan_review">Review plan</string>
+    <string name="scan_retry">Scan again</string>
+    <string name="scan_run_background">Keep scanning in background</string>
+
+    <!-- Review -->
+    <string name="review_title">Review plan</string>
+    <string name="review_ai">AI analyze</string>
+    <string name="review_will_free">Selected changes will free</string>
+    <string name="review_dry_run_on">Dry run is on: nothing will change</string>
+    <string name="tab_delete">Delete</string>
+    <string name="tab_move">Move</string>
+    <string name="tab_rename">Rename</string>
+    <string name="review_empty_title">Nothing here</string>
+    <string name="review_empty_delete">Run a scan to find duplicates and junk, or ask the AI for suggestions.</string>
+    <string name="review_empty_move">Tap \"AI analyze\" to get folder and rename suggestions.</string>
+    <string name="apply_selected">%1$s selected</string>
+    <string name="apply_frees">Frees %1$s · deletes go to Trash</string>
+    <string name="apply">Apply</string>
+    <string name="apply_simulate">Simulate</string>
+    <string name="detail_size">Size</string>
+    <string name="detail_action">Action</string>
+    <string name="detail_destination">Destination</string>
+    <string name="remove_from_plan">Remove from plan</string>
+    <string name="confirm_title">Apply these changes?</string>
+    <string name="confirm_title_dry">Simulate these changes?</string>
+    <string name="confirm_counts">%1$s to Trash · %2$s moves · %3$s renames</string>
+    <string name="confirm_body">%1$s will move to TidyPhone\'s Trash. Nothing is permanently deleted, and you can undo everything from History.</string>
+    <string name="confirm_body_dry">Dry run: every check runs, but no file is touched (%1$s would go to Trash).</string>
+    <string name="exec_running">Applying…</string>
+    <string name="exec_done">Done</string>
+    <string name="exec_dry_done">Simulation finished</string>
+    <string name="exec_undone">Undone</string>
+    <string name="exec_summary">%1$s done · %2$s skipped · %3$s failed</string>
+    <string name="exec_freed">%1$s moved to Trash</string>
+    <string name="exec_would_free">Would free %1$s</string>
+    <string name="exec_trash_note">Files stay in Trash until it auto-empties, so you can still restore them.</string>
+    <string name="need_key_title">Add your AI key first</string>
+    <string name="need_key_body">Pick a provider and add an API key in Settings. Local servers like Ollama don\'t need one.</string>
+
+    <!-- AI analysis -->
+    <string name="ai_sheet_title">AI analysis</string>
+    <string name="ai_scope">Which files?</string>
+    <string name="scope_all">All</string>
+    <string name="scope_downloads">Downloads</string>
+    <string name="scope_non_media">No photos/videos</string>
+    <string name="ai_content">Content analysis</string>
+    <string name="ai_content_desc">Also send small thumbnails and the first lines of text files, for this run only.</string>
+    <string name="ai_estimate">Estimate before running</string>
+    <string name="ai_estimating">Estimating…</string>
+    <string name="est_files">Files</string>
+    <string name="est_batches">Requests</string>
+    <string name="est_tokens">Tokens in / out (approx.)</string>
+    <string name="est_cost">Estimated cost</string>
+    <string name="est_free">Free (local server)</string>
+    <string name="est_unknown">Unknown, set prices in Settings</string>
+    <string name="ai_privacy_metadata">Only file names, folders, sizes, types and dates are sent to your provider.</string>
+    <string name="ai_privacy_content">Thumbnails and text excerpts will be sent to your provider for this run.</string>
+    <string name="ai_run">Run analysis</string>
+    <string name="ai_running">AI is analyzing your files…</string>
+    <string name="ai_done">%1$s AI suggestions added</string>
+    <string name="ai_failed">AI analysis stopped</string>
+    <string name="ai_progress">%1$s of %2$s files · request %3$s of %4$s</string>
+    <string name="ai_skipped">%1$s requests skipped after invalid answers</string>
+    <string name="privacy_title">Send file content?</string>
+    <string name="privacy_body">For this run, TidyPhone will send small image thumbnails (photos, video frames, the first page of PDFs) and the first lines of text files to your AI provider. Don\'t enable this for private photos or documents unless you trust the provider or use a local model.</string>
+    <string name="privacy_accept">I understand, enable</string>
+
+    <!-- History -->
+    <string name="history_title">History</string>
+    <string name="history_sub">Every change TidyPhone made. Undo anything.</string>
+    <string name="history_empty_title">No changes yet</string>
+    <string name="history_empty_body">Applied actions show up here and can be undone.</string>
+    <string name="history_batch">%1$s actions · %2$s to Trash</string>
+    <string name="undo_result">%1$d restored</string>
+    <string name="undo_renamed">%1$d renamed to avoid overwriting</string>
+    <string name="undo_failed">%1$d could not be undone</string>
+
+    <!-- Trash -->
+    <string name="trash_title">Trash</string>
+    <string name="trash_holding">Holding in Trash</string>
+    <string name="trash_auto">Auto-empties after %1$s days</string>
+    <string name="trash_empty_now">Empty Trash now</string>
+    <string name="trash_empty_title">Trash is empty</string>
+    <string name="trash_empty_body">Files you delete with TidyPhone wait here before they are gone for good.</string>
+    <string name="trash_days_left">%1$s days left</string>
+    <string name="trash_empty_confirm_title">Empty Trash?</string>
+    <string name="trash_empty_confirm_body">%1$s files (%2$s) will be permanently deleted. This can\'t be undone.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="sec_ai">AI provider</string>
+    <string name="provider_claude">Claude</string>
+    <string name="provider_openai">OpenAI-compatible</string>
+    <string name="base_url">Base URL</string>
+    <string name="base_url_hint">OpenAI, OpenRouter, Groq, Gemini (OpenAI endpoint), Ollama (http://IP:11434/v1), LM Studio (http://IP:1234/v1)…</string>
+    <string name="model">Model</string>
+    <string name="json_mode">JSON mode</string>
+    <string name="json_mode_desc">Ask the server for JSON output. Turn off if your server rejects it.</string>
+    <string name="api_key">API key</string>
+    <string name="api_key_optional">API key (optional for local servers)</string>
+    <string name="key_saved_placeholder">•••••••• saved</string>
+    <string name="key_saved">Saved, encrypted with Android Keystore</string>
+    <string name="key_not_saved">No key saved</string>
+    <string name="price_in">Input $ / 1M tokens</string>
+    <string name="price_out">Output $ / 1M tokens</string>
+    <string name="price_hint">Optional. Used for the cost estimate when the model isn\'t in the built-in price list.</string>
+    <string name="batch_budget">Max input tokens per request: %1$s</string>
+    <string name="test_connection">Test connection</string>
+    <string name="testing">Testing…</string>
+    <string name="test_ok">Connected: %1$s</string>
+    <string name="rules_title">Rules &amp; exclusions</string>
+    <string name="rules_summary">%1$s custom rules · %2$s excluded folders</string>
+    <string name="sec_cleanup">Cleanup &amp; safety</string>
+    <string name="set_large">Large file threshold: %1$s MB</string>
+    <string name="set_old_downloads">Old downloads after %1$s days</string>
+    <string name="set_old_screens">Old screenshots after %1$s days</string>
+    <string name="set_trash_days">Empty Trash after %1$s days</string>
+    <string name="set_dry_run">Dry run</string>
+    <string name="set_dry_run_desc">Simulate actions without touching any file.</string>
+    <string name="sec_appearance">Appearance</string>
+    <string name="set_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="set_language">Language</string>
+    <string name="lang_system">System</string>
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_fa" translatable="false">فارسی</string>
+    <string name="sec_privacy">Privacy</string>
+    <string name="privacy_text">Scanning, duplicate detection and junk detection run entirely on your phone. AI analysis sends file metadata (names, folders, sizes, types, dates) to the provider you choose, in batches; file content is only sent when you enable content analysis for a run. API keys are encrypted with the Android Keystore and never logged. Nothing is backed up or sent anywhere else.</string>
+
+    <!-- Rules -->
+    <string name="rules_custom">Your instructions for the AI</string>
+    <string name="rules_custom_desc">One rule per line, in plain language. They are added to the AI\'s instructions.</string>
+    <string name="rules_placeholder">never touch the Work folder\nput invoices in Documents/Finance</string>
+    <string name="rules_examples">Examples</string>
+    <string name="rule_ex1">Put invoices and receipts in Documents/Finance</string>
+    <string name="rule_ex2">Never suggest deleting voice notes</string>
+    <string name="rule_ex3">Keep university files in Documents/University</string>
+    <string name="rules_excludes">Excluded folders</string>
+    <string name="rules_excludes_desc">Enforced in code: these folders are never scanned, moved, renamed or deleted, whatever the AI says.</string>
+    <string name="rules_always_protected">Always protected: Android/data, Android/obb, app-private folders and system folders.</string>
+    <plurals name="n_files">
+        <item quantity="one">%1$s file</item>
+        <item quantity="other">%1$s files</item>
+    </plurals>
+    <plurals name="group_summary">
+        <item quantity="one">%1$s item · %2$s</item>
+        <item quantity="other">%1$s items · %2$s</item>
+    </plurals>
 </resources>

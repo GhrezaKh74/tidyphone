@@ -85,10 +85,11 @@ fun TidyTheme(mode: ThemeMode = ThemeMode.SYSTEM, content: @Composable () -> Uni
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true
     }
-    MaterialTheme(
-        colorScheme = if (dark) DarkColors else LightColors,
-        typography = TidyTypography,
-        shapes = TidyShapes,
-        content = content,
-    )
+    val colors = if (dark) DarkColors else LightColors
+    MaterialTheme(colorScheme = colors, typography = TidyTypography, shapes = TidyShapes) {
+        androidx.compose.runtime.CompositionLocalProvider(
+            androidx.compose.material3.LocalContentColor provides colors.onBackground,
+            content = content,
+        )
+    }
 }
