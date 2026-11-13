@@ -70,7 +70,8 @@ import app.tidyphone.ui.theme.Brand
 fun DashboardScreen(onScan: () -> Unit, onReview: () -> Unit, onAi: () -> Unit, onSettings: () -> Unit, vm: DashboardViewModel = hiltViewModel()) {
     val s by vm.state.collectAsStateWithLifecycle()
     LifecycleResumeEffect(Unit) { vm.refreshStorage(); onPauseOrDispose { } }
-    DashboardContent(s, onScan = { vm.scan(); onScan() }, onReview = onReview, onSettings = onSettings, onAi = onAi)
+    val withNotifications = app.tidyphone.ui.rememberWithNotificationPermission()
+    DashboardContent(s, onScan = { withNotifications { vm.scan(); onScan() } }, onReview = onReview, onSettings = onSettings, onAi = onAi)
 }
 
 @Composable

@@ -23,9 +23,6 @@
     <string name="nav_trash">سطل زباله</string>
     <string name="nav_settings">تنظیمات</string>
 
-    <string name="notif_channel_scan">اسکن حافظه</string>
-    <string name="notif_scanning">در حال اسکن حافظه…</string>
-
     <string name="onb1_title">ببین چه چیزی گوشیت را پر کرده</string>
     <string name="onb1_body">تایدی‌فون دانلودها، عکس‌ها، اسناد و فایل‌های پیام‌رسان‌ها را فهرست می‌کند و فایل‌های تکراری، اضافه و حجیمِ فراموش‌شده را همین‌جا روی گوشی پیدا می‌کند.</string>
     <string name="onb2_title">بگذار هوش مصنوعی مرتبش کند</string>
@@ -249,4 +246,21 @@
         <item quantity="one">%1$s مورد · %2$s</item>
         <item quantity="other">%1$s مورد · %2$s</item>
     </plurals>
+    <string name="notif_channel_progress">پیشرفت کارهای پس‌زمینه</string>
+    <string name="notif_channel_done">کارهای تمام‌شده</string>
+    <string name="notif_scan_walk">در حال اسکن حافظه</string>
+    <string name="notif_scan_hash">پیدا کردن تکراری‌ها</string>
+    <string name="notif_scan_analyze">ساختن پیشنهادها</string>
+    <string name="notif_scan_text">%1$s فایل · %2$s</string>
+    <string name="notif_hash_text">%1$s از %2$s فایل بررسی شد</string>
+    <string name="notif_scan_done_title">اسکن تمام شد</string>
+    <string name="notif_scan_done_text">%1$s فایل اسکن شد · %2$s پیشنهاد · تا %3$s فضای آزاد</string>
+    <string name="notif_ai_title">هوش مصنوعی در حال تحلیل فایل‌هاست</string>
+    <string name="notif_ai_preparing">در حال آماده‌سازی…</string>
+    <string name="notif_ai_done_title">تحلیل هوشمند تمام شد</string>
+    <string name="ai_interrupted">تحلیل نیمه‌کاره ماند (سیستم برنامه را بست). هر وقت آماده بودی دوباره اجرا کن.</string>
+    <string name="bg_title">ادامهٔ اسکن با صفحهٔ خاموش</string>
+    <string name="bg_body">بعضی گوشی‌ها برای صرفه‌جویی در باتری کارهای پس‌زمینه را متوقف می‌کنند. اجازه بده تایدی‌فون در پس‌زمینه کار کند تا اسکن‌های طولانی کامل شوند.</string>
+    <string name="bg_allow">اجازه بده</string>
+    <string name="notif_perm_denied">اعلان‌ها خاموش است، پس پیشرفت در نوار وضعیت نشان داده نمی‌شود. اسکن همچنان انجام می‌شود.</string>
 </resources>

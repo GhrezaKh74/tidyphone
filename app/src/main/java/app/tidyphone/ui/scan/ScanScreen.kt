@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.BatteryChargingFull
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.ErrorOutline
@@ -39,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -128,6 +130,7 @@ fun ScanContent(s: ScanState, onClose: () -> Unit, onCancel: () -> Unit, onRevie
                     PathText(s.currentItem)
                 }
             }
+            if (s.running) BackgroundTips()
             Spacer(Modifier.weight(1f))
             when (s.phase) {
                 ScanPhase.DONE -> {
@@ -232,5 +235,36 @@ private fun Radar(running: Boolean, done: Boolean, failed: Boolean) {
                 null, tint = Color.White, modifier = Modifier.size(44.dp),
             )
         }
+    }
+}
+
+@Composable
+private fun BackgroundTips() {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var unrestricted by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(app.tidyphone.ui.BackgroundPermissions.batteryUnrestricted(context)) }
+    val notifications = androidx.compose.runtime.remember { app.tidyphone.ui.BackgroundPermissions.notificationsAllowed(context) }
+    androidx.lifecycle.compose.LifecycleResumeEffect(Unit) {
+        unrestricted = app.tidyphone.ui.BackgroundPermissions.batteryUnrestricted(context)
+        onPauseOrDispose { }
+    }
+    if (!unrestricted) {
+        Spacer(Modifier.height(12.dp))
+        TidyCard(Modifier.fillMaxWidth()) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(androidx.compose.material.icons.Icons.Rounded.BatteryChargingFull, null, tint = Brand.Amber)
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.bg_title), style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.bg_body), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                TextButton(onClick = { runCatching { context.startActivity(app.tidyphone.ui.BackgroundPermissions.batteryIntent(context)) } }) {
+                    Text(stringResource(R.string.bg_allow))
+                }
+            }
+        }
+    }
+    if (!notifications) {
+        Spacer(Modifier.height(8.dp))
+        Text(stringResource(R.string.notif_perm_denied), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
     }
 }

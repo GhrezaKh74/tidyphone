@@ -127,7 +127,8 @@ fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: Review
         }
     }
 
-    if (sheet.open) AnalysisSheet(sheet, settings, vm::setScope, vm::setIncludeContent, vm::runAnalysis, vm::closeAnalysis)
+    val withNotifications = app.tidyphone.ui.rememberWithNotificationPermission()
+    if (sheet.open) AnalysisSheet(sheet, settings, vm::setScope, vm::setIncludeContent, { withNotifications { vm.runAnalysis() } }, vm::closeAnalysis)
     preview?.let { PreviewSheet(it, vm.root, onDismiss = { preview = null }, onRemove = { vm.dismiss(listOf(it)); preview = null }) }
     if (confirm) ConfirmApplyDialog(items, settings.dryRun, onConfirm = { confirm = false; vm.execute() }, onDismiss = { confirm = false })
     if (exec.running || exec.report != null) ExecutionDialog(exec, onUndo = vm::undoLast, onClose = vm::clearReport)

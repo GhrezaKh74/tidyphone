@@ -3,7 +3,6 @@ package app.tidyphone.data.repo
 import android.content.Context
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import app.tidyphone.data.worker.ScanWorker
@@ -34,9 +33,9 @@ class ScanRepository @Inject constructor(@ApplicationContext private val context
     private val wm get() = WorkManager.getInstance(context)
 
     fun startScan() {
-        val request = OneTimeWorkRequestBuilder<ScanWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .build()
+        // A regular (not expedited) request: the worker promotes itself to a long-running
+        // foreground service, which isn't subject to the expedited-job time quota.
+        val request = OneTimeWorkRequestBuilder<ScanWorker>().build()
         wm.enqueueUniqueWork(ScanWorker.NAME, ExistingWorkPolicy.KEEP, request)
     }
 

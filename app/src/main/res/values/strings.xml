@@ -28,8 +28,6 @@
     <string name="nav_settings">Settings</string>
 
     <!-- Notifications -->
-    <string name="notif_channel_scan">Storage scan</string>
-    <string name="notif_scanning">Scanning your storage…</string>
 
     <!-- Onboarding -->
     <string name="onb1_title">See what\'s filling your phone</string>
@@ -269,4 +267,21 @@
         <item quantity="one">%1$s item · %2$s</item>
         <item quantity="other">%1$s items · %2$s</item>
     </plurals>
+    <string name="notif_channel_progress">Background progress</string>
+    <string name="notif_channel_done">Finished tasks</string>
+    <string name="notif_scan_walk">Scanning storage</string>
+    <string name="notif_scan_hash">Finding duplicates</string>
+    <string name="notif_scan_analyze">Building suggestions</string>
+    <string name="notif_scan_text">%1$s files · %2$s</string>
+    <string name="notif_hash_text">%1$s of %2$s files checked</string>
+    <string name="notif_scan_done_title">Scan finished</string>
+    <string name="notif_scan_done_text">%1$s files scanned · %2$s suggestions · up to %3$s to free</string>
+    <string name="notif_ai_title">AI is analyzing your files</string>
+    <string name="notif_ai_preparing">Preparing…</string>
+    <string name="notif_ai_done_title">AI analysis finished</string>
+    <string name="ai_interrupted">The analysis was interrupted (the app was closed by the system). Run it again when you\'re ready.</string>
+    <string name="bg_title">Keep scanning with the screen off</string>
+    <string name="bg_body">Some phones stop background work to save battery. Allow TidyPhone to run in the background so long scans finish.</string>
+    <string name="bg_allow">Allow</string>
+    <string name="notif_perm_denied">Notifications are off, so progress won\'t show in the status bar. The scan still runs.</string>
 </resources>

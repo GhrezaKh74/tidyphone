@@ -70,7 +70,12 @@ private val tabs = listOf(
 )
 
 @Composable
-fun TidyAppRoot(permissionGranted: Boolean, vm: AppViewModel = hiltViewModel()) {
+fun TidyAppRoot(
+    permissionGranted: Boolean,
+    destination: String? = null,
+    onDestinationHandled: () -> Unit = {},
+    vm: AppViewModel = hiltViewModel(),
+) {
     val settings by vm.settingsState.collectAsStateWithLifecycle()
     val s = settings ?: return
     TidyTheme(mode = s.themeMode) {
@@ -79,6 +84,12 @@ fun TidyAppRoot(permissionGranted: Boolean, vm: AppViewModel = hiltViewModel()) 
         val dest = entry?.destination
         val showBar = tabs.any { t -> dest?.hasRoute(t.cls) == true }
         val start: Any = if (s.onboardingDone && permissionGranted) HomeRoute else OnboardingRoute
+        androidx.compose.runtime.LaunchedEffect(destination, start) {
+            if (destination == app.tidyphone.data.notify.ProgressNotifier.DEST_REVIEW && start == HomeRoute) {
+                nav.navigate(ReviewRoute()) { popUpTo(HomeRoute); launchSingleTop = true }
+            }
+            if (destination != null) onDestinationHandled()
+        }
 
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
