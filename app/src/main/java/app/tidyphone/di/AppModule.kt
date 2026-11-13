@@ -26,3 +26,18 @@ object AppModule {
     @Provides fun historyDao(db: TidyDatabase): HistoryDao = db.history()
     @Provides fun trashDao(db: TidyDatabase): TrashDao = db.trash()
 }
+
+@javax.inject.Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ApplicationScope
+
+@Module
+@InstallIn(SingletonComponent::class)
+object CoreModule {
+    @Provides @Singleton @ApplicationScope
+    fun appScope(): kotlinx.coroutines.CoroutineScope =
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.Default)
+
+    @Provides @Singleton
+    fun httpClient(): io.ktor.client.HttpClient = app.tidyphone.data.llm.defaultHttpClient()
+}

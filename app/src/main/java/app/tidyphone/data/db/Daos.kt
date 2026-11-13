@@ -49,6 +49,8 @@ interface PlanDao {
     @Insert suspend fun insertAll(items: List<PlanItemEntity>)
     @Query("UPDATE plan_items SET selected = :selected WHERE id IN (:ids)") suspend fun setSelected(ids: List<Long>, selected: Boolean)
     @Query("DELETE FROM plan_items WHERE id IN (:ids)") suspend fun delete(ids: List<Long>)
+    @Query("DELETE FROM plan_items WHERE source = :source AND path IN (:paths)") suspend fun deleteBySourceAndPaths(source: PlanSource, paths: List<String>)
+    @Query("DELETE FROM plan_items WHERE path IN (:paths)") suspend fun deleteByPaths(paths: List<String>)
     @Query("DELETE FROM plan_items WHERE source IN (:sources)") suspend fun deleteBySources(sources: List<PlanSource>)
     @Query("DELETE FROM plan_items WHERE path NOT IN (SELECT path FROM files)") suspend fun deleteOrphans()
     @Query("DELETE FROM plan_items") suspend fun clear()

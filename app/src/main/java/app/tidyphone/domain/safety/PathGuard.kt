@@ -89,6 +89,9 @@ class PathGuard(
         return true
     }
 
+    /** A folder name segment: same rules as a file name. */
+    fun isValidFolderName(name: String): Boolean = isValidFileName(name)
+
     private fun isProtected(p: String): Boolean {
         if (blocked.any { isInside(p, it) }) return true
         // Anything else under Android/ except Android/media is app-private too.
