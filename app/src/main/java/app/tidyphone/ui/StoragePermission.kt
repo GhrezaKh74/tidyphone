@@ -11,7 +11,11 @@ import android.provider.Settings
 import androidx.core.content.ContextCompat
 
 object StoragePermission {
-    fun isGranted(context: Context): Boolean =
+    /** Tests only: the JVM test runtime can't answer the real All-files-access check. */
+    @androidx.annotation.VisibleForTesting
+    var grantedForTests: Boolean? = null
+
+    fun isGranted(context: Context): Boolean = grantedForTests ?:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Environment.isExternalStorageManager()
         else ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 

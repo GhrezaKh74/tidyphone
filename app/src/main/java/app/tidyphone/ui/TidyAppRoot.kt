@@ -86,7 +86,7 @@ fun TidyAppRoot(
         val start: Any = if (s.onboardingDone && permissionGranted) HomeRoute else OnboardingRoute
         androidx.compose.runtime.LaunchedEffect(destination, start) {
             if (destination == app.tidyphone.data.notify.ProgressNotifier.DEST_REVIEW && start == HomeRoute) {
-                nav.navigate(ReviewRoute()) { popUpTo(HomeRoute); launchSingleTop = true }
+                nav.navigateToTab(ReviewRoute(), restore = false)
             }
             if (destination != null) onDestinationHandled()
         }
@@ -100,13 +100,7 @@ fun TidyAppRoot(
                             val selected = dest?.hasRoute(t.cls) == true
                             NavigationBarItem(
                                 selected = selected,
-                                onClick = {
-                                    nav.navigate(t.route) {
-                                        popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
+                                onClick = { nav.navigateToTab(t.route) },
                                 icon = { Icon(t.icon, null) },
                                 label = { Text(stringResource(t.label), maxLines = 1) },
                                 colors = NavigationBarItemDefaults.colors(
@@ -140,11 +134,11 @@ fun TidyAppRoot(
                     composable<HomeRoute> {
                         DashboardScreen(
                             onScan = { nav.navigate(ScanRoute) },
-                            onReview = { nav.navigate(ReviewRoute()) { launchSingleTop = true } },
-                            onAi = { nav.navigate(ReviewRoute(openAi = true)) { launchSingleTop = true } },
+                            onReview = { nav.navigateToTab(ReviewRoute()) },
+                            onAi = { nav.navigateToTab(ReviewRoute(openAi = true), restore = false) },
                             onApps = { nav.navigate(app.tidyphone.ui.nav.AppsRoute) { launchSingleTop = true } },
-                            onAlbums = { nav.navigate(ReviewRoute(openAi = true, albums = true)) { launchSingleTop = true } },
-                            onSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } },
+                            onAlbums = { nav.navigateToTab(ReviewRoute(openAi = true, albums = true), restore = false) },
+                            onSettings = { nav.navigateToTab(SettingsRoute) },
                         )
                     }
                     composable<ScanRoute>(
@@ -155,10 +149,10 @@ fun TidyAppRoot(
                     ) {
                         ScanScreen(
                             onClose = { nav.popBackStack() },
-                            onReview = { nav.navigate(ReviewRoute()) { popUpTo(HomeRoute) } },
+                            onReview = { nav.navigateToTab(ReviewRoute(), restore = false) },
                         )
                     }
-                    composable<ReviewRoute> { e -> ReviewScreen(openAi = e.toRoute<ReviewRoute>().openAi, albums = e.toRoute<ReviewRoute>().albums, onOpenSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } }) }
+                    composable<ReviewRoute> { e -> ReviewScreen(openAi = e.toRoute<ReviewRoute>().openAi, albums = e.toRoute<ReviewRoute>().albums, onOpenSettings = { nav.navigateToTab(SettingsRoute) }) }
                     composable<HistoryRoute> { HistoryScreen() }
                     composable<TrashRoute> { TrashScreen() }
                     composable<SettingsRoute> { SettingsScreen(onOpenRules = { nav.navigate(RulesRoute) }) }
@@ -167,5 +161,21 @@ fun TidyAppRoot(
                 }
             }
         }
+    }
+}
+
+/**
+ * The one way to open a bottom-bar destination, from the bar or from a shortcut.
+ *
+ * Tabs keep their own state (saveState/restoreState), but Home never restores: the navigation
+ * library also files the first saved tab state under the start destination, so restoring Home
+ * would bring back whatever screen was open before instead of Home. [restore] = false opens a
+ * fresh copy, used when the route carries new arguments (e.g. "open the AI sheet").
+ */
+fun androidx.navigation.NavController.navigateToTab(route: Any, restore: Boolean = true) {
+    navigate(route) {
+        popUpTo(graph.findStartDestination().id) { saveState = true }
+        launchSingleTop = true
+        restoreState = restore && route != HomeRoute
     }
 }
