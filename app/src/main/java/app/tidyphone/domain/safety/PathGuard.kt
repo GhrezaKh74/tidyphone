@@ -69,6 +69,19 @@ class PathGuard(
         return p == root || !isProtected(p)
     }
 
+    /**
+     * May an undo put a file back here? Like [canWriteTo] but ignores user excludes: putting a
+     * file back where it came from is always what the user wants.
+     */
+    fun canRestoreTo(path: String): Boolean {
+        val p = normalize(path) ?: return false
+        if (!isInside(p, root) || p == root) return false
+        if (blocked.any { isInside(p, it) }) return false
+        val android = "$root/Android"
+        if (isInside(p, android) && !isInside(p, "$android/media")) return false
+        return trash == null || !isInside(p, trash)
+    }
+
     /** True when the folder is the app's trash or inside it. */
     fun isTrash(path: String): Boolean {
         val p = normalize(path) ?: return false

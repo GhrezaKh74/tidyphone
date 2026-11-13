@@ -16,4 +16,16 @@ class TidyApp : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(android.util.Log.WARN)
             .build()
+
+    override fun onCreate() {
+        super.onCreate()
+        // Daily trash cleanup (respects the retention setting).
+        androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            app.tidyphone.data.worker.TrashCleanupWorker.NAME,
+            androidx.work.ExistingPeriodicWorkPolicy.KEEP,
+            androidx.work.PeriodicWorkRequestBuilder<app.tidyphone.data.worker.TrashCleanupWorker>(1, java.util.concurrent.TimeUnit.DAYS)
+                .setConstraints(androidx.work.Constraints.Builder().setRequiresBatteryNotLow(true).build())
+                .build(),
+        )
+    }
 }

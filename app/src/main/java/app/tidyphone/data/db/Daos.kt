@@ -68,6 +68,7 @@ interface HistoryDao {
     @Query("SELECT * FROM history ORDER BY timestamp DESC, id DESC") fun observeAll(): Flow<List<HistoryEntity>>
     @Query("SELECT * FROM history WHERE id = :id") suspend fun get(id: Long): HistoryEntity?
     @Query("SELECT * FROM history WHERE batchId = :batchId ORDER BY id DESC") suspend fun batch(batchId: String): List<HistoryEntity>
+    @Query("SELECT * FROM history WHERE resultPath = :path AND undone = 0 ORDER BY id DESC LIMIT 1") suspend fun byResultPath(path: String): HistoryEntity?
     @Insert suspend fun insert(entity: HistoryEntity): Long
     @Query("UPDATE history SET undone = 1, undoneAt = :at WHERE id = :id") suspend fun markUndone(id: Long, at: Long)
     @Query("DELETE FROM history WHERE timestamp < :before") suspend fun deleteOlderThan(before: Long)
