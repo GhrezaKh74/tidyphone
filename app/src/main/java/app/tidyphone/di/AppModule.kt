@@ -25,6 +25,8 @@ object AppModule {
     @Provides fun planDao(db: TidyDatabase): PlanDao = db.plan()
     @Provides fun historyDao(db: TidyDatabase): HistoryDao = db.history()
     @Provides fun trashDao(db: TidyDatabase): TrashDao = db.trash()
+    @Provides fun ignoredDao(db: TidyDatabase): app.tidyphone.data.db.IgnoredDao = db.ignored()
+    @Provides fun mediaMetaDao(db: TidyDatabase): app.tidyphone.data.db.MediaMetaDao = db.mediaMeta()
 }
 
 @javax.inject.Qualifier

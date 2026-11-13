@@ -69,6 +69,7 @@ class LlmAnalysisRepository @Inject constructor(
     private val locations: StorageLocations,
     private val providers: LlmProviderFactory,
     private val sampler: ContentSampler,
+    private val skipped: SkippedRepository,
     @ApplicationContext private val context: Context,
 ) {
     private val _state = MutableStateFlow(AnalysisState())
@@ -117,6 +118,7 @@ class LlmAnalysisRepository @Inject constructor(
         _state.value = AnalysisState(running = true)
         val result = try {
             val plan = prepare(scope, includeContent)
+            val skips = skipped.filter()
             val s = settings.current()
             val analyzer = LlmAnalyzer(providers.create(s), SuggestionMapper(guards.guard(s)))
             val r = analyzer.run(
@@ -124,12 +126,15 @@ class LlmAnalysisRepository @Inject constructor(
                 filesById = plan.filesById,
                 system = plan.system,
                 enrich = { batch -> if (plan.includeContent) batch.map { sample(it, plan.filesById[it.id]!!) } else batch },
+                onBatchItems = { batch, items ->
+                    // Results show up in Review as soon as each batch is done.
+                    val paths = batch.mapNotNull { plan.filesById[it.id]?.path }
+                    paths.chunked(500).forEach { planDao.deleteBySourceAndPaths(PlanSource.LLM, it) }
+                    val now = System.currentTimeMillis()
+                    planDao.insertAll(skips.filter(items).map { PlanItemEntity.from(it, now) })
+                },
                 onProgress = { p -> _state.update { it.copy(progress = p) }; onProgress(p) },
             )
-            val paths = plan.filesById.values.map { it.path }
-            paths.chunked(500).forEach { planDao.deleteBySourceAndPaths(PlanSource.LLM, it) }
-            val now = System.currentTimeMillis()
-            planDao.insertAll(r.items.map { PlanItemEntity.from(it, now) })
             AnalysisState(
                 running = false, progress = _state.value.progress, finishedSuggestions = r.items.size,
                 skippedBatches = r.skippedBatches, dropped = r.droppedSuggestions.size,

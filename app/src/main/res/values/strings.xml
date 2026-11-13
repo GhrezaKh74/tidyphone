@@ -284,4 +284,18 @@
     <string name="bg_body">Some phones stop background work to save battery. Allow TidyPhone to run in the background so long scans finish.</string>
     <string name="bg_allow">Allow</string>
     <string name="notif_perm_denied">Notifications are off, so progress won\'t show in the status bar. The scan still runs.</string>
+    <string name="src_album">Smart album</string>
+    <string name="skip_all">Skip all</string>
+    <string name="skip_suggestion">Skip this suggestion</string>
+    <string name="skip_hint">Skipped suggestions don\'t come back on later scans unless the file changes. Restore them in Settings.</string>
+    <string name="skipped_title">Skipped suggestions</string>
+    <string name="skipped_restore">Restore all</string>
+    <plurals name="skipped_n">
+        <item quantity="one">%1$d suggestion skipped</item>
+        <item quantity="other">%1$d suggestions skipped</item>
+    </plurals>
+    <plurals name="skipped_count">
+        <item quantity="one">%1$s skipped suggestion</item>
+        <item quantity="other">%1$s skipped suggestions</item>
+    </plurals>
 </resources>

@@ -263,4 +263,18 @@
     <string name="bg_body">بعضی گوشی‌ها برای صرفه‌جویی در باتری کارهای پس‌زمینه را متوقف می‌کنند. اجازه بده تایدی‌فون در پس‌زمینه کار کند تا اسکن‌های طولانی کامل شوند.</string>
     <string name="bg_allow">اجازه بده</string>
     <string name="notif_perm_denied">اعلان‌ها خاموش است، پس پیشرفت در نوار وضعیت نشان داده نمی‌شود. اسکن همچنان انجام می‌شود.</string>
+    <string name="src_album">آلبوم هوشمند</string>
+    <string name="skip_all">رد همه</string>
+    <string name="skip_suggestion">رد کردن این پیشنهاد</string>
+    <string name="skip_hint">پیشنهادهای ردشده در اسکن‌های بعدی برنمی‌گردند، مگر اینکه فایل تغییر کند. از تنظیمات می‌توانی برشان گردانی.</string>
+    <string name="skipped_title">پیشنهادهای ردشده</string>
+    <string name="skipped_restore">برگرداندن همه</string>
+    <plurals name="skipped_n">
+        <item quantity="one">%1$d پیشنهاد رد شد</item>
+        <item quantity="other">%1$d پیشنهاد رد شد</item>
+    </plurals>
+    <plurals name="skipped_count">
+        <item quantity="one">%1$s پیشنهاد ردشده</item>
+        <item quantity="other">%1$s پیشنهاد ردشده</item>
+    </plurals>
 </resources>

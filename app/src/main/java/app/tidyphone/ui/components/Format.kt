@@ -60,6 +60,7 @@ fun PlanSource.label(): Int = when (this) {
     PlanSource.LOCAL_TEMP -> R.string.src_temp
     PlanSource.LOCAL_OLD_SCREENSHOT -> R.string.src_old_screenshots
     PlanSource.LLM -> R.string.src_ai
+    PlanSource.LLM_ALBUM -> R.string.src_album
 }
 
 fun llmCategoryLabel(key: String?): Int? = when (key) {

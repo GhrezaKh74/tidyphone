@@ -81,6 +81,9 @@ class ReviewViewModel @Inject constructor(
 
     fun dismiss(items: List<PlanItem>) = viewModelScope.launch { plan.dismiss(items.map { it.id }) }
 
+    fun skip(items: List<PlanItem>) = viewModelScope.launch { plan.skip(items) }
+    fun unskip(items: List<PlanItem>) = viewModelScope.launch { plan.unskip(items) }
+
     fun execute() {
         if (_exec.value.running) return
         _exec.value = ExecUi(running = true)

@@ -53,6 +53,14 @@ class LlmAnalyzerTest {
         assertThrows(LlmException::class.java) { kotlinx.coroutines.runBlocking { LlmAnalyzer(auth, mapper).run(batches, files, "sys") } }
     }
 
+    @Test fun `results are reported batch by batch`() = runTest {
+        val p = FakeProvider(mutableListOf({ LlmResult(answer(0)) }, { LlmResult("bad") }, { LlmResult("bad") }))
+        val seen = mutableListOf<Pair<List<Int>, Int>>()
+        LlmAnalyzer(p, mapper).run(batches, files, "sys", onBatchItems = { b, items -> seen += b.map { it.id } to items.size })
+        // Only the successful batch is reported; the skipped one isn't.
+        assertThat(seen).containsExactly(listOf(0) to 1)
+    }
+
     @Test fun `token usage is summed`() = runTest {
         val p = FakeProvider(mutableListOf({ LlmResult(answer(0), 100, 20) }, { LlmResult(answer(1), 50, 10) }))
         val r = LlmAnalyzer(p, mapper).run(batches, files, "sys")

@@ -41,9 +41,12 @@ enum class FileCategory { IMAGE, VIDEO, AUDIO, DOCUMENT, ARCHIVE, APK, OTHER;
 
 enum class ActionType { DELETE, MOVE, RENAME }
 
-/** Why a plan item was suggested. LOCAL_* come from on-device rules, LLM from the model. */
+/**
+ * Why a plan item was suggested. LOCAL_* come from on-device rules, LLM from the model,
+ * LLM_ALBUM from smart photo albums (grouped on device, named by the model).
+ */
 enum class PlanSource {
-    LOCAL_DUPLICATE, LOCAL_LARGE, LOCAL_OLD_DOWNLOAD, LOCAL_APK, LOCAL_EMPTY_FOLDER, LOCAL_TEMP, LOCAL_OLD_SCREENSHOT, LLM
+    LOCAL_DUPLICATE, LOCAL_LARGE, LOCAL_OLD_DOWNLOAD, LOCAL_APK, LOCAL_EMPTY_FOLDER, LOCAL_TEMP, LOCAL_OLD_SCREENSHOT, LLM, LLM_ALBUM
 }
 
 /**

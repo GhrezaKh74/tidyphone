@@ -41,6 +41,8 @@ class LlmAnalyzer(
         filesById: Map<Int, FileEntry>,
         system: String,
         enrich: suspend (List<BatchFile>) -> List<BatchFile> = { it },
+        /** Called after every successful batch with its files and suggestions, so results can be shown right away. */
+        onBatchItems: suspend (List<BatchFile>, List<PlanItem>) -> Unit = { _, _ -> },
         onProgress: (LlmProgress) -> Unit = {},
     ): LlmRunResult {
         val items = mutableListOf<PlanItem>()
@@ -88,6 +90,7 @@ class LlmAnalyzer(
                 val inBatch = parsed.suggestions.filter { it.id in ids }
                 val mapped = mapper.map(inBatch, filesById)
                 items += mapped.items
+                onBatchItems(batch, mapped.items)
                 dropped += mapped.dropped + parsed.itemErrors
             }
             done += batch.size

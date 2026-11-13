@@ -73,11 +73,25 @@ class PlanRepository @Inject constructor(
     private val log: RoomActionLog,
     private val trash: RoomTrashIndex,
     private val sync: IndexSync,
+    private val skipped: SkippedRepository,
 ) {
     val items: Flow<List<PlanItem>> = planDao.observeAll().map { list -> list.map { it.toDomain() } }
 
     suspend fun setSelected(ids: List<Long>, selected: Boolean) = ids.chunked(500).forEach { planDao.setSelected(it, selected) }
     suspend fun dismiss(ids: List<Long>) = ids.chunked(500).forEach { planDao.delete(it) }
+
+    /** Removes suggestions from the plan and keeps them from coming back on later scans. */
+    suspend fun skip(items: List<PlanItem>) {
+        skipped.add(items)
+        dismiss(items.map { it.id })
+    }
+
+    /** Undo for [skip]: puts the same suggestions back. */
+    suspend fun unskip(items: List<PlanItem>) {
+        skipped.remove(items)
+        val now = System.currentTimeMillis()
+        planDao.insertAll(items.map { app.tidyphone.data.db.PlanItemEntity.from(it.copy(id = 0), now) })
+    }
     suspend fun clearAll() = planDao.clear()
 
     /** Runs the selected items (only after the user approved them in the Review screen). */
@@ -167,4 +181,23 @@ class TrashRepository @Inject constructor(
         val days = settings.current().trashRetentionDays
         purge(dao.olderThan(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(days.toLong())).map { it.toDomain() })
     }
+}
+
+@Singleton
+class SkippedRepository @Inject constructor(private val dao: app.tidyphone.data.db.IgnoredDao) {
+    val count: Flow<Int> = dao.observeCount()
+
+    suspend fun add(items: List<PlanItem>) {
+        val now = System.currentTimeMillis()
+        dao.upsertAll(items.map { app.tidyphone.data.db.IgnoredEntity(it.path, it.source, it.size, now) })
+    }
+
+    suspend fun filter(): app.tidyphone.domain.model.SkipFilter =
+        app.tidyphone.domain.model.SkipFilter(dao.all().map { app.tidyphone.domain.model.SkipFilter.Skipped(it.path, it.source, it.size) })
+
+    suspend fun remove(items: List<PlanItem>) =
+        dao.delete(items.map { app.tidyphone.data.db.IgnoredEntity(it.path, it.source, it.size, 0) })
+
+    /** Forget all skips; the suggestions come back with the next scan or AI run. */
+    suspend fun clear() = dao.clear()
 }

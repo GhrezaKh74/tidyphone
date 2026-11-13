@@ -217,7 +217,8 @@ fun PreviewSheet(item: PlanItem, root: String, onDismiss: () -> Unit, onRemove: 
             Spacer(Modifier.height(10.dp))
             Text(context.reasonText(item, root), style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(18.dp))
-            GhostButton(stringResource(R.string.remove_from_plan), onRemove, Modifier.fillMaxWidth())
+            GhostButton(stringResource(R.string.skip_suggestion), onRemove, Modifier.fillMaxWidth())
+            Text(stringResource(R.string.skip_hint), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
         }
     }
 }

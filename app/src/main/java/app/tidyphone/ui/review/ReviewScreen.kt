@@ -28,6 +28,16 @@ import androidx.compose.material.icons.automirrored.rounded.DriveFileMove
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteSweep
+import androidx.compose.material.icons.rounded.DoNotDisturbOn
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.material.icons.rounded.DriveFileRenameOutline
 import androidx.compose.material.icons.rounded.Science
 import androidx.compose.material.icons.rounded.TaskAlt
@@ -92,6 +102,21 @@ fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: Review
 
     var tab by rememberSaveable { mutableStateOf(ActionType.DELETE) }
     var preview by remember { mutableStateOf<PlanItem?>(null) }
+    val snack = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val skip: (List<PlanItem>) -> Unit = { list ->
+        vm.skip(list)
+        scope.launch {
+            snack.currentSnackbarData?.dismiss()
+            val r = snack.showSnackbar(
+                context.resources.getQuantityString(R.plurals.skipped_n, list.size, list.size),
+                actionLabel = context.getString(R.string.undo),
+                duration = SnackbarDuration.Short,
+            )
+            if (r == SnackbarResult.ActionPerformed) vm.unskip(list)
+        }
+    }
     var confirm by remember { mutableStateOf(false) }
     var needKey by remember { mutableStateOf(false) }
     var aiHandled by rememberSaveable { mutableStateOf(false) }
@@ -118,6 +143,7 @@ fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: Review
                 dryRun = settings.dryRun,
                 onToggle = vm::toggle,
                 onGroup = vm::setSelected,
+                onSkip = skip,
                 onPreview = { preview = it },
                 onCancelAnalysis = vm::cancelAnalysis,
                 onDismissAnalysis = vm::dismissAnalysisResult,
@@ -125,11 +151,12 @@ fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: Review
             )
             ApplyBar(items, dryRun = settings.dryRun, onApply = { confirm = true })
         }
+        SnackbarHost(snack, Modifier.align(Alignment.BottomCenter).padding(bottom = 88.dp, start = 16.dp, end = 16.dp))
     }
 
     val withNotifications = app.tidyphone.ui.rememberWithNotificationPermission()
     if (sheet.open) AnalysisSheet(sheet, settings, vm::setScope, vm::setIncludeContent, { withNotifications { vm.runAnalysis() } }, vm::closeAnalysis)
-    preview?.let { PreviewSheet(it, vm.root, onDismiss = { preview = null }, onRemove = { vm.dismiss(listOf(it)); preview = null }) }
+    preview?.let { PreviewSheet(it, vm.root, onDismiss = { preview = null }, onRemove = { skip(listOf(it)); preview = null }) }
     if (confirm) ConfirmApplyDialog(items, settings.dryRun, onConfirm = { confirm = false; vm.execute() }, onDismiss = { confirm = false })
     if (exec.running || exec.report != null) ExecutionDialog(exec, onUndo = vm::undoLast, onClose = vm::clearReport)
     if (needKey) NeedKeyDialog(onSettings = { needKey = false; onOpenSettings() }, onDismiss = { needKey = false })
@@ -166,6 +193,7 @@ fun ReviewList(
     onToggle: (PlanItem) -> Unit,
     onGroup: (List<PlanItem>, Boolean) -> Unit,
     onPreview: (PlanItem) -> Unit,
+    onSkip: (List<PlanItem>) -> Unit = {},
     onCancelAnalysis: () -> Unit,
     onDismissAnalysis: () -> Unit,
     modifier: Modifier = Modifier,
@@ -211,11 +239,14 @@ fun ReviewList(
                     collapsed = key in collapsed,
                     onCollapse = { collapsed = if (key in collapsed) collapsed - key else collapsed + key },
                     onGroup = onGroup,
+                    onSkip = onSkip,
                 )
             }
             if (key !in collapsed) {
                 items(list, key = { it.id }) { item ->
-                    ItemRow(item, root, onToggle = { onToggle(item) }, onClick = { onPreview(item) }, modifier = Modifier.animateItem())
+                    SwipeToSkip(onSkip = { onSkip(listOf(item)) }, modifier = Modifier.animateItem()) {
+                        ItemRow(item, root, onToggle = { onToggle(item) }, onClick = { onPreview(item) })
+                    }
                 }
             }
         }
@@ -283,7 +314,7 @@ private fun Tabs(tab: ActionType, onTab: (ActionType) -> Unit, counts: Map<Actio
 }
 
 @Composable
-private fun GroupHeader(title: String, isPath: Boolean, list: List<PlanItem>, collapsed: Boolean, onCollapse: () -> Unit, onGroup: (List<PlanItem>, Boolean) -> Unit) {
+private fun GroupHeader(title: String, isPath: Boolean, list: List<PlanItem>, collapsed: Boolean, onCollapse: () -> Unit, onGroup: (List<PlanItem>, Boolean) -> Unit, onSkip: (List<PlanItem>) -> Unit) {
     val sel = list.count { it.selected }
     val state = when (sel) { 0 -> ToggleableState.Off; list.size -> ToggleableState.On; else -> ToggleableState.Indeterminate }
     Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxWidth()) {
@@ -294,6 +325,11 @@ private fun GroupHeader(title: String, isPath: Boolean, list: List<PlanItem>, co
                     pluralStringResource(R.plurals.group_summary, list.size, number(list.size), bytes(list.sumOf { it.size })),
                     style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            TextButton(onClick = { onSkip(list) }) {
+                Icon(Icons.Rounded.DoNotDisturbOn, null, modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(stringResource(R.string.skip_all), style = MaterialTheme.typography.labelMedium)
             }
             TriStateCheckbox(state = state, onClick = { onGroup(list, state != ToggleableState.On) })
         }
@@ -386,4 +422,31 @@ private fun ApplyBar(items: List<PlanItem>, dryRun: Boolean, onApply: () -> Unit
             }
         }
     }
+}
+
+/** Swipe a suggestion sideways (either direction) to skip it. */
+@Composable
+private fun SwipeToSkip(onSkip: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val state = rememberSwipeToDismissBoxState()
+    SwipeToDismissBox(
+        state = state,
+        modifier = modifier,
+        onDismiss = { onSkip() },
+        backgroundContent = {
+            val active = state.targetValue != SwipeToDismissBoxValue.Settled
+            Box(
+                Modifier.fillMaxSize().padding(vertical = 4.dp).clip(RoundedCornerShape(24.dp))
+                    .background(if (active) Brand.Amber.copy(alpha = .9f) else MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .padding(horizontal = 22.dp),
+                contentAlignment = if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd) Alignment.CenterStart else Alignment.CenterEnd,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Rounded.DoNotDisturbOn, null, tint = Color.White)
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.skip), color = Color.White, style = MaterialTheme.typography.labelLarge)
+                }
+            }
+        },
+        content = { content() },
+    )
 }

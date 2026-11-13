@@ -88,3 +88,24 @@ data class TrashEntity(
 }
 
 data class CategoryTotal(val category: FileCategory, val bytes: Long, val count: Int)
+
+/** A suggestion the user skipped. It stays hidden on later scans while the file size is unchanged. */
+@Entity(tableName = "ignored", primaryKeys = ["path", "source"])
+data class IgnoredEntity(
+    val path: String,
+    val source: PlanSource,
+    val size: Long,
+    val ignoredAt: Long,
+)
+
+/** Cached photo/video metadata (EXIF / video container), keyed by path and invalidated by size + mtime. */
+@Entity(tableName = "media_meta")
+data class MediaMetaEntity(
+    @PrimaryKey val path: String,
+    val size: Long,
+    val lastModified: Long,
+    val takenAt: Long?,
+    val latitude: Double?,
+    val longitude: Double?,
+    val camera: String?,
+)

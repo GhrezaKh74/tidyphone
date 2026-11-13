@@ -44,6 +44,7 @@ class ScanWorker @AssistedInject constructor(
     private val settings: SettingsRepository,
     private val guards: GuardProvider,
     private val notifier: ProgressNotifier,
+    private val skipped: app.tidyphone.data.repo.SkippedRepository,
 ) : CoroutineWorker(context, params) {
 
     private val ctx get() = applicationContext
@@ -126,7 +127,7 @@ class ScanWorker @AssistedInject constructor(
             oldDownloadDays = s.oldDownloadDays,
             oldScreenshotDays = s.oldScreenshotDays,
         )
-        val items = LocalAnalyzer(guard).analyze(files, groups, config)
+        val items = skipped.filter().filter(LocalAnalyzer(guard).analyze(files, groups, config))
         val now = System.currentTimeMillis()
         planDao.replaceSources(LOCAL_SOURCES, items.map { PlanItemEntity.from(it, now) })
 

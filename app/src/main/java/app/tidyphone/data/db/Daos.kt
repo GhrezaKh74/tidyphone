@@ -83,3 +83,19 @@ interface TrashDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insert(entity: TrashEntity): Long
     @Query("DELETE FROM trash WHERE id = :id") suspend fun delete(id: Long)
 }
+
+@Dao
+interface IgnoredDao {
+    @Upsert suspend fun upsertAll(items: List<IgnoredEntity>)
+    @Query("SELECT * FROM ignored") suspend fun all(): List<IgnoredEntity>
+    @Query("SELECT COUNT(*) FROM ignored") fun observeCount(): Flow<Int>
+    @Query("DELETE FROM ignored") suspend fun clear()
+    @androidx.room.Delete suspend fun delete(items: List<IgnoredEntity>)
+}
+
+@Dao
+interface MediaMetaDao {
+    @Query("SELECT * FROM media_meta WHERE path IN (:paths)") suspend fun get(paths: List<String>): List<MediaMetaEntity>
+    @Upsert suspend fun upsertAll(items: List<MediaMetaEntity>)
+    @Query("DELETE FROM media_meta WHERE path NOT IN (SELECT path FROM files)") suspend fun deleteOrphans()
+}

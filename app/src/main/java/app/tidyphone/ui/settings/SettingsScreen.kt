@@ -85,8 +85,9 @@ fun SettingsScreen(onOpenRules: () -> Unit, vm: SettingsViewModel = hiltViewMode
     val s by vm.settings.collectAsStateWithLifecycle()
     val keys by vm.keySaved.collectAsStateWithLifecycle()
     val test by vm.test.collectAsStateWithLifecycle()
+    val skippedCount by vm.skippedCount.collectAsStateWithLifecycle()
     val settings = s ?: return
-    SettingsContent(settings, keys, test, vm::update, vm::saveKey, vm::clearKey, vm::testConnection, onOpenRules)
+    SettingsContent(settings, keys, test, vm::update, vm::saveKey, vm::clearKey, vm::testConnection, onOpenRules, skippedCount, vm::restoreSkipped)
 }
 
 @Composable
@@ -99,6 +100,8 @@ fun SettingsContent(
     clearKey: (ProviderType) -> Unit,
     onTest: () -> Unit,
     onOpenRules: () -> Unit,
+    skippedCount: Int = 0,
+    onRestoreSkipped: () -> Unit = {},
 ) {
     Box(Modifier.fillMaxSize()) {
         GlowBackground()
@@ -128,6 +131,13 @@ fun SettingsContent(
                     SliderRow(stringResource(R.string.set_old_screens, number(s.oldScreenshotDays)), s.oldScreenshotDays.toFloat(), 7f..365f) { v -> update { it.copy(oldScreenshotDays = v.roundToInt()) } }
                     SliderRow(stringResource(R.string.set_trash_days, number(s.trashRetentionDays)), s.trashRetentionDays.toFloat(), 1f..90f) { v -> update { it.copy(trashRetentionDays = v.roundToInt()) } }
                     SwitchRow(stringResource(R.string.set_dry_run), stringResource(R.string.set_dry_run_desc), s.dryRun) { on -> update { it.copy(dryRun = on) } }
+                    Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(R.string.skipped_title), style = MaterialTheme.typography.bodyMedium)
+                            Text(androidx.compose.ui.res.pluralStringResource(R.plurals.skipped_count, skippedCount, number(skippedCount)), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        TextButton(onClick = onRestoreSkipped, enabled = skippedCount > 0) { Text(stringResource(R.string.skipped_restore)) }
+                    }
                 }
             }
             item {

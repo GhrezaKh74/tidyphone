@@ -31,7 +31,11 @@ class SettingsViewModel @Inject constructor(
     private val repo: SettingsRepository,
     private val keys: SecureKeyStore,
     private val providers: LlmProviderFactory,
+    private val skipped: app.tidyphone.data.repo.SkippedRepository,
 ) : ViewModel() {
+    val skippedCount: StateFlow<Int> = skipped.count.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+    fun restoreSkipped() = viewModelScope.launch { skipped.clear() }
+
     val settings: StateFlow<AppSettings?> = repo.settings.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _keySaved = MutableStateFlow(ProviderType.entries.associateWith { keys.has(it) })
