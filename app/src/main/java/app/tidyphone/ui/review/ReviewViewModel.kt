@@ -35,6 +35,9 @@ data class AnalysisSheetUi(
     val counts: Map<AnalysisScope, Int> = emptyMap(),
     val plan: AnalysisPlan? = null,
     val preparing: Boolean = false,
+    /** Smart albums: photos whose metadata has been read while preparing. */
+    val metaDone: Int = 0,
+    val metaTotal: Int = 0,
 )
 
 @HiltViewModel
@@ -104,8 +107,8 @@ class ReviewViewModel @Inject constructor(
 
     // --- LLM analysis ---
 
-    fun openAnalysis() = viewModelScope.launch {
-        _sheet.value = AnalysisSheetUi(open = true, preparing = true)
+    fun openAnalysis(scope: AnalysisScope = AnalysisScope.ALL) = viewModelScope.launch {
+        _sheet.value = AnalysisSheetUi(open = true, preparing = true, scope = scope)
         val counts = AnalysisScope.entries.associateWith { analysis.countFor(it) }
         _sheet.update { it.copy(counts = counts) }
         prepare()
@@ -118,8 +121,11 @@ class ReviewViewModel @Inject constructor(
     private suspend fun prepare() {
         _sheet.update { it.copy(preparing = true) }
         val s = _sheet.value
-        val p = analysis.prepare(s.scope, s.includeContent)
-        _sheet.update { it.copy(plan = p, preparing = false) }
+        val p = analysis.prepare(s.scope, s.includeContent) { done, total -> _sheet.update { it.copy(metaDone = done, metaTotal = total) } }
+        // Ignore a result for a scope the user already switched away from.
+        if (_sheet.value.scope == s.scope && _sheet.value.includeContent == s.includeContent) {
+            _sheet.update { it.copy(plan = p, preparing = false) }
+        }
     }
 
     fun closeAnalysis() { _sheet.value = AnalysisSheetUi() }

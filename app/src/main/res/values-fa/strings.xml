@@ -337,4 +337,17 @@
         <item quantity="one">%1$s برنامهٔ بی‌استفاده · %2$s</item>
         <item quantity="other">%1$s برنامهٔ بی‌استفاده · %2$s</item>
     </plurals>
+    <string name="scope_albums">آلبوم هوشمند</string>
+    <string name="albums_explain_title">آلبوم بر اساس مشخصات عکس</string>
+    <string name="albums_explain">عکس‌ها و فیلم‌ها روی خود گوشی بر اساس زمان و مکان گرفته شدن گروه‌بندی می‌شوند (سفرها جدا، و عکس‌های شهر خودت ماه‌به‌ماه). هوش مصنوعی فقط برای هر آلبوم اسم می‌گذارد.</string>
+    <string name="albums_explain_offline">عکس‌ها و فیلم‌ها روی خود گوشی بر اساس زمان و مکان گروه‌بندی می‌شوند. بدون کلید هوش مصنوعی، اسم آلبوم‌ها از روی تاریخ و مکان روی گوشی ساخته می‌شود.</string>
+    <string name="albums_privacy">برای سرویس هوش مصنوعی فرستاده می‌شود: تاریخ آلبوم‌ها، مکان تقریبی (حدود ۱۱ کیلومتر)، مدل دوربین و چند نام فایل. خود عکس‌ها فرستاده نمی‌شوند.</string>
+    <string name="albums_privacy_content">در این اجرا دو تصویر کوچک از هر آلبوم هم فرستاده می‌شود.</string>
+    <string name="albums_privacy_offline">هیچ چیزی از گوشی خارج نمی‌شود، جز پیدا کردن نام مکان‌ها با سرویس مکان‌یاب اندروید.</string>
+    <string name="albums_run">ساختن آلبوم‌ها</string>
+    <string name="est_albums">آلبوم‌ها</string>
+    <string name="ai_reading_meta">خواندن مشخصات عکس‌ها: %1$s از %2$s</string>
+    <string name="albums_card_title">آلبوم هوشمند عکس‌ها</string>
+    <string name="albums_card_body">عکس‌ها و فیلم‌ها را بر اساس تاریخ و مکان در آلبوم سفرها و ماه‌ها مرتب کن.</string>
+    <string name="set_albums_folder">پوشهٔ آلبوم‌های هوشمند</string>
 </resources>

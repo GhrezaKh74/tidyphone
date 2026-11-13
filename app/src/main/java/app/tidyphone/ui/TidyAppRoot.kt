@@ -143,6 +143,7 @@ fun TidyAppRoot(
                             onReview = { nav.navigate(ReviewRoute()) { launchSingleTop = true } },
                             onAi = { nav.navigate(ReviewRoute(openAi = true)) { launchSingleTop = true } },
                             onApps = { nav.navigate(app.tidyphone.ui.nav.AppsRoute) { launchSingleTop = true } },
+                            onAlbums = { nav.navigate(ReviewRoute(openAi = true, albums = true)) { launchSingleTop = true } },
                             onSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } },
                         )
                     }
@@ -157,7 +158,7 @@ fun TidyAppRoot(
                             onReview = { nav.navigate(ReviewRoute()) { popUpTo(HomeRoute) } },
                         )
                     }
-                    composable<ReviewRoute> { e -> ReviewScreen(openAi = e.toRoute<ReviewRoute>().openAi, onOpenSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } }) }
+                    composable<ReviewRoute> { e -> ReviewScreen(openAi = e.toRoute<ReviewRoute>().openAi, albums = e.toRoute<ReviewRoute>().albums, onOpenSettings = { nav.navigate(SettingsRoute) { launchSingleTop = true } }) }
                     composable<HistoryRoute> { HistoryScreen() }
                     composable<TrashRoute> { TrashScreen() }
                     composable<SettingsRoute> { SettingsScreen(onOpenRules = { nav.navigate(RulesRoute) }) }

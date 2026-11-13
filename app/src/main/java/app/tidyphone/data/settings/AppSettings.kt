@@ -24,6 +24,8 @@ data class AppSettings(
     val oldScreenshotDays: Int = 60,
     val trashRetentionDays: Int = 30,
     val unusedAppDays: Int = 60,
+    /** Where smart albums are created, relative to the storage root. */
+    val albumsFolder: String = "Pictures/Albums",
     val dryRun: Boolean = false,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
 ) {

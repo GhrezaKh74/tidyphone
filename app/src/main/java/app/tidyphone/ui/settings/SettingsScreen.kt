@@ -129,6 +129,8 @@ fun SettingsContent(
                     SliderRow(stringResource(R.string.set_large, number(s.largeFileMb)), s.largeFileMb.toFloat(), 25f..2000f) { v -> update { it.copy(largeFileMb = (v / 25).roundToInt() * 25) } }
                     SliderRow(stringResource(R.string.set_old_downloads, number(s.oldDownloadDays)), s.oldDownloadDays.toFloat(), 7f..365f) { v -> update { it.copy(oldDownloadDays = v.roundToInt()) } }
                     SliderRow(stringResource(R.string.set_old_screens, number(s.oldScreenshotDays)), s.oldScreenshotDays.toFloat(), 7f..365f) { v -> update { it.copy(oldScreenshotDays = v.roundToInt()) } }
+                    Field(stringResource(R.string.set_albums_folder), s.albumsFolder) { v -> update { it.copy(albumsFolder = v) } }
+                    Spacer(Modifier.height(10.dp))
                     SliderRow(stringResource(R.string.set_trash_days, number(s.trashRetentionDays)), s.trashRetentionDays.toFloat(), 1f..90f) { v -> update { it.copy(trashRetentionDays = v.roundToInt()) } }
                     SwitchRow(stringResource(R.string.set_dry_run), stringResource(R.string.set_dry_run_desc), s.dryRun) { on -> update { it.copy(dryRun = on) } }
                     Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {

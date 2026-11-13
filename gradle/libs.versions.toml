@@ -18,6 +18,7 @@ ktor = "3.6.1"
 serialization = "1.13.0"
 coroutines = "1.11.0"
 coil = "3.6.3"
+exifinterface = "1.4.2"
 junit = "4.13.2"
 truth = "1.4.5"
 robolectric = "4.17"
@@ -56,6 +57,7 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil" }
 junit = { module = "junit:junit", version.ref = "junit" }

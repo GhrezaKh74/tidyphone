@@ -33,6 +33,7 @@ class LlmAnalysisWorker @AssistedInject constructor(
     private fun progress(p: LlmProgress?): ProgressNotifier.Progress = ProgressNotifier.Progress(
         title = ctx.getString(R.string.notif_ai_title),
         text = if (p == null || p.filesTotal == 0) ctx.getString(R.string.notif_ai_preparing)
+        else if (p.batchCount == 0) ctx.getString(R.string.ai_reading_meta, ctx.num(p.filesDone), ctx.num(p.filesTotal))
         else ctx.getString(R.string.ai_progress, ctx.num(p.filesDone), ctx.num(p.filesTotal), ctx.num(p.batchIndex + 1), ctx.num(p.batchCount)),
         percent = p?.let { AnalysisProgress.percent(it.filesDone, it.filesTotal) },
         cancelIntent = WorkManager.getInstance(ctx).createCancelPendingIntent(id),

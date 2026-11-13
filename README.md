@@ -14,7 +14,7 @@
   <img src="docs/screenshots/en_light_4_review.webp" width="19%">
   <img src="docs/screenshots/fa_dark_2_dashboard.webp" width="19%">
   <img src="docs/screenshots/fa_dark_4_review.webp" width="19%">
-  <img src="docs/screenshots/fa_dark_8_settings.webp" width="19%">
+  <img src="docs/screenshots/fa_dark_9_apps.webp" width="19%">
 </p>
 
 ---
@@ -35,6 +35,10 @@
 | **Execute & undo** | "Delete" moves files to an app-managed Trash (`/storage/emulated/0/.TidyPhoneTrash`). The Trash auto-empties after N days (configurable) or on demand. Every action is recorded in History and can be undone (move back, un-rename, restore), one by one or as a whole run. |
 | **Custom rules** | Plain-language instructions ("never touch the Work folder", "put invoices in Documents/Finance") are added to the system prompt. A separate **exclude-folders list is enforced in code**. |
 | **Dry run** | Runs every check and shows what would happen, without touching a file. |
+| **Skip** | Skip a whole group (e.g. all large files) or swipe away one suggestion. Skipped suggestions don't come back on later scans unless the file changes; restore them in Settings. |
+| **Smart photo albums** | Reads capture date and GPS from photo EXIF and video metadata, groups shots on the device into trips (away from your usual area) and months, looks up place names, and lets the AI name each album, e.g. “Kish trip · Aug 2026” or «سفر کیش · مرداد ۱۴۰۵» (Solar Hijri dates are computed locally). Only dates, ~11 km locations and a few file names are sent; without an AI key albums are named on the device. People in photos are never identified. |
+| **Unused apps & games** | Uses Android's usage stats (with “Usage access”) to list apps and games not opened for 30–365 days, with their size, and uninstalls the ones you pick through the system uninstall dialog. |
+| **Background work** | Scans and AI runs are foreground workers with a wake lock: they keep going with the screen off and show progress in the status bar (a Live Update chip on Android 16+), with Cancel. |
 
 ### Safety rules (enforced in code, not just in the prompt)
 
@@ -155,6 +159,10 @@ Unit tests cover duplicate detection, local analysis, path/rule enforcement, LLM
 | **اجرا و بازگردانی** | «حذف» فایل را به سطل زبالهٔ خود برنامه (`.TidyPhoneTrash`) می‌برد. سطل زباله بعد از N روز (قابل تنظیم) یا دستی خالی می‌شود. هر کاری در تاریخچه ثبت می‌شود و قابل بازگردانی است (جابه‌جایی برعکس، برگرداندن نام، بازیابی از سطل زباله)، تک‌تک یا یک‌جا. |
 | **قوانین دلخواه** | دستورهای ساده مثل «هرگز به پوشهٔ Work دست نزن» یا «فاکتورها را در Documents/Finance بگذار» به دستورهای سیستمی مدل اضافه می‌شوند. فهرست **پوشه‌های مستثنا در خود کد اجرا می‌شود**، نه فقط در پرامپت. |
 | **حالت آزمایشی** | همهٔ بررسی‌ها انجام می‌شود و نتیجه نمایش داده می‌شود، بدون اینکه به فایلی دست زده شود. |
+| **رد کردن** | یک گروه کامل (مثلاً همهٔ فایل‌های حجیم) را رد کن یا یک پیشنهاد را با کشیدن کنار بزن. پیشنهادهای ردشده در اسکن‌های بعدی برنمی‌گردند، مگر اینکه فایل تغییر کند. |
+| **آلبوم هوشمند عکس‌ها** | تاریخ و مکان گرفته شدن را از EXIF عکس‌ها و مشخصات فیلم‌ها می‌خواند، روی گوشی آن‌ها را به سفرها و ماه‌ها گروه‌بندی می‌کند، نام مکان را پیدا می‌کند و هوش مصنوعی برای هر آلبوم اسم می‌گذارد، مثل «سفر کیش · مرداد ۱۴۰۵» (تاریخ شمسی روی گوشی حساب می‌شود). فقط تاریخ، مکان تقریبی و چند نام فایل فرستاده می‌شود؛ بدون کلید هم اسم‌گذاری روی گوشی انجام می‌شود. چهرهٔ افراد هرگز شناسایی نمی‌شود. |
+| **برنامه‌ها و بازی‌های بی‌استفاده** | با «دسترسی به آمار استفاده»، برنامه‌ها و بازی‌هایی را که ۳۰ تا ۳۶۵ روز باز نشده‌اند همراه با حجمشان نشان می‌دهد و با پنجرهٔ حذف نصب اندروید حذفشان می‌کند. |
+| **کار در پس‌زمینه** | اسکن و تحلیل هوشمند با صفحهٔ خاموش هم ادامه پیدا می‌کنند و پیشرفتشان در نوار وضعیت دیده می‌شود (در اندروید ۱۶ به‌صورت چیپ Live Update). |
 
 ### قوانین ایمنی (در کد)
 

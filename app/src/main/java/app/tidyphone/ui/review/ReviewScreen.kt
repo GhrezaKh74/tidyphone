@@ -73,6 +73,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tidyphone.R
+import app.tidyphone.data.repo.AnalysisScope
 import app.tidyphone.data.repo.AnalysisState
 import app.tidyphone.domain.model.ActionType
 import app.tidyphone.domain.model.PlanItem
@@ -93,7 +94,7 @@ import app.tidyphone.ui.components.reasonText
 import app.tidyphone.ui.theme.Brand
 
 @Composable
-fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: ReviewViewModel = hiltViewModel()) {
+fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, albums: Boolean = false, vm: ReviewViewModel = hiltViewModel()) {
     val items by vm.items.collectAsStateWithLifecycle()
     val analysis by vm.analysisState.collectAsStateWithLifecycle()
     val exec by vm.exec.collectAsStateWithLifecycle()
@@ -123,7 +124,7 @@ fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: Review
     LaunchedEffect(openAi) {
         if (openAi && !aiHandled) {
             aiHandled = true
-            if (vm.hasKey()) vm.openAnalysis() else needKey = true
+            vm.openAnalysis(if (albums) AnalysisScope.ALBUMS else AnalysisScope.ALL)
         }
     }
 
@@ -132,7 +133,7 @@ fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: Review
         Column(Modifier.fillMaxSize().statusBarsPadding()) {
             Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.review_title), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
-                AiButton(enabled = !analysis.running) { if (vm.hasKey()) vm.openAnalysis() else needKey = true }
+                AiButton(enabled = !analysis.running) { vm.openAnalysis() }
             }
             ReviewList(
                 items = items,
@@ -155,7 +156,10 @@ fun ReviewScreen(onOpenSettings: () -> Unit, openAi: Boolean = false, vm: Review
     }
 
     val withNotifications = app.tidyphone.ui.rememberWithNotificationPermission()
-    if (sheet.open) AnalysisSheet(sheet, settings, vm::setScope, vm::setIncludeContent, { withNotifications { vm.runAnalysis() } }, vm::closeAnalysis)
+    if (sheet.open) AnalysisSheet(
+        sheet, settings, vm::setScope, vm::setIncludeContent, { withNotifications { vm.runAnalysis() } }, vm::closeAnalysis,
+        hasKey = vm.hasKey(), onOpenSettings = { vm.closeAnalysis(); onOpenSettings() },
+    )
     preview?.let { PreviewSheet(it, vm.root, onDismiss = { preview = null }, onRemove = { skip(listOf(it)); preview = null }) }
     if (confirm) ConfirmApplyDialog(items, settings.dryRun, onConfirm = { confirm = false; vm.execute() }, onDismiss = { confirm = false })
     if (exec.running || exec.report != null) ExecutionDialog(exec, onUndo = vm::undoLast, onClose = vm::clearReport)
@@ -231,10 +235,10 @@ fun ReviewList(
                 GroupHeader(
                     title = when (tab) {
                         ActionType.DELETE -> stringResource(PlanSource.valueOf(key).label())
-                        ActionType.MOVE -> key
+                        ActionType.MOVE -> if (list.all { it.source == PlanSource.LLM_ALBUM }) "📷 " + list.first().reason else key
                         ActionType.RENAME -> stringResource(R.string.tab_rename)
                     },
-                    isPath = tab == ActionType.MOVE,
+                    isPath = tab == ActionType.MOVE && list.any { it.source != PlanSource.LLM_ALBUM },
                     list = list,
                     collapsed = key in collapsed,
                     onCollapse = { collapsed = if (key in collapsed) collapsed - key else collapsed + key },

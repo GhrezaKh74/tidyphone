@@ -358,4 +358,17 @@
         <item quantity="one">%1$s unused app · %2$s</item>
         <item quantity="other">%1$s unused apps · %2$s</item>
     </plurals>
+    <string name="scope_albums">Smart albums</string>
+    <string name="albums_explain_title">Albums from photo metadata</string>
+    <string name="albums_explain">Photos and videos are grouped on your phone by when and where they were taken (trips away from home, and month by month at home). The AI only gives each album a name.</string>
+    <string name="albums_explain_offline">Photos and videos are grouped on your phone by when and where they were taken. Without an AI key, albums are named on the device from the date and place.</string>
+    <string name="albums_privacy">Sent to your AI provider: album dates, approximate locations (about 11 km), camera model and a few file names. Not the photos.</string>
+    <string name="albums_privacy_content">Also sent for this run: two small thumbnails per album.</string>
+    <string name="albums_privacy_offline">Nothing leaves your phone except place lookups through Android’s geocoder.</string>
+    <string name="albums_run">Create albums</string>
+    <string name="est_albums">Albums</string>
+    <string name="ai_reading_meta">Reading photo details: %1$s of %2$s</string>
+    <string name="albums_card_title">Smart photo albums</string>
+    <string name="albums_card_body">Group photos and videos into trips and months by date and place.</string>
+    <string name="set_albums_folder">Smart albums folder</string>
 </resources>

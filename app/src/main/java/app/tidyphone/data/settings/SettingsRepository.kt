@@ -41,6 +41,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         val oldShot = intPreferencesKey("old_screenshot_days")
         val trashDays = intPreferencesKey("trash_days")
         val appDays = intPreferencesKey("unused_app_days")
+        val albums = stringPreferencesKey("albums_folder")
         val dryRun = booleanPreferencesKey("dry_run")
         val theme = stringPreferencesKey("theme")
     }
@@ -67,6 +68,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
             oldScreenshotDays = p[K.oldShot] ?: d.oldScreenshotDays,
             trashRetentionDays = p[K.trashDays] ?: d.trashRetentionDays,
             unusedAppDays = p[K.appDays] ?: d.unusedAppDays,
+            albumsFolder = p[K.albums] ?: d.albumsFolder,
             dryRun = p[K.dryRun] ?: d.dryRun,
             themeMode = p[K.theme]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: d.themeMode,
         )
@@ -94,6 +96,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
             p[K.oldShot] = s.oldScreenshotDays.coerceAtLeast(1)
             p[K.trashDays] = s.trashRetentionDays.coerceIn(1, 365)
             p[K.appDays] = s.unusedAppDays.coerceIn(7, 730)
+            p[K.albums] = s.albumsFolder.trim().trim('/').ifEmpty { AppSettings().albumsFolder }
             p[K.dryRun] = s.dryRun
             p[K.theme] = s.themeMode.name
         }

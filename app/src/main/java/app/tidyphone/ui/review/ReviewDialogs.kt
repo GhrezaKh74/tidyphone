@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Key
+import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material.icons.rounded.PrivacyTip
 import androidx.compose.material.icons.rounded.Science
 import androidx.compose.material.icons.rounded.Warning
@@ -79,8 +80,12 @@ fun AnalysisSheet(
     onContent: (Boolean) -> Unit,
     onRun: () -> Unit,
     onDismiss: () -> Unit,
+    hasKey: Boolean = true,
+    onOpenSettings: () -> Unit = {},
 ) {
     var privacyAsk by remember { mutableStateOf(false) }
+    val albums = ui.scope == AnalysisScope.ALBUMS
+    val blockedByKey = !hasKey && !albums
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = MaterialTheme.colorScheme.surfaceContainer) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 22.dp).navigationBarsPadding().padding(bottom = 16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -97,13 +102,37 @@ fun AnalysisSheet(
             Spacer(Modifier.height(18.dp))
             Text(stringResource(R.string.ai_scope), style = MaterialTheme.typography.titleSmall)
             Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf(AnalysisScope.ALL to R.string.scope_all, AnalysisScope.DOWNLOADS to R.string.scope_downloads, AnalysisScope.NON_MEDIA to R.string.scope_non_media).forEach { (s, l) ->
+            androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(AnalysisScope.ALL to R.string.scope_all, AnalysisScope.DOWNLOADS to R.string.scope_downloads, AnalysisScope.NON_MEDIA to R.string.scope_non_media, AnalysisScope.ALBUMS to R.string.scope_albums).forEach { (s, l) ->
                     FilterChip(
                         selected = ui.scope == s,
                         onClick = { onScope(s) },
                         label = { Text("${stringResource(l)} (${number(ui.counts[s] ?: 0)})", maxLines = 1) },
+                        leadingIcon = if (s == AnalysisScope.ALBUMS) ({ Icon(Icons.Rounded.PhotoLibrary, null, Modifier.size(18.dp)) }) else null,
                     )
+                }
+            }
+            if (albums) {
+                Spacer(Modifier.height(12.dp))
+                androidx.compose.material3.Surface(color = Brand.Violet.copy(alpha = .12f), shape = RoundedCornerShape(16.dp)) {
+                    Column(Modifier.padding(14.dp)) {
+                        Text(stringResource(R.string.albums_explain_title), style = MaterialTheme.typography.titleSmall)
+                        Spacer(Modifier.height(4.dp))
+                        Text(stringResource(if (hasKey) R.string.albums_explain else R.string.albums_explain_offline), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+            if (blockedByKey) {
+                Spacer(Modifier.height(12.dp))
+                androidx.compose.material3.Surface(color = Brand.Amber.copy(alpha = .14f), shape = RoundedCornerShape(16.dp), onClick = onOpenSettings) {
+                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Rounded.Key, null, tint = Brand.Amber)
+                        Spacer(Modifier.width(10.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(R.string.need_key_title), style = MaterialTheme.typography.titleSmall)
+                            Text(stringResource(R.string.need_key_body), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
                 }
             }
             Spacer(Modifier.height(16.dp))
@@ -112,7 +141,7 @@ fun AnalysisSheet(
                     Text(stringResource(R.string.ai_content), style = MaterialTheme.typography.titleSmall)
                     Text(stringResource(R.string.ai_content_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                Switch(ui.includeContent, onCheckedChange = { on -> if (on) privacyAsk = true else onContent(false) })
+                Switch(ui.includeContent, enabled = hasKey, onCheckedChange = { on -> if (on) privacyAsk = true else onContent(false) })
             }
             Spacer(Modifier.height(16.dp))
             Box(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).padding(0.dp)) {
@@ -125,17 +154,25 @@ fun AnalysisSheet(
                 Icon(Icons.Rounded.PrivacyTip, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp).padding(top = 2.dp))
                 Spacer(Modifier.width(6.dp))
                 Text(
-                    stringResource(if (ui.includeContent) R.string.ai_privacy_content else R.string.ai_privacy_metadata),
+                    stringResource(
+                        when {
+                            albums && !hasKey -> R.string.albums_privacy_offline
+                            albums && ui.includeContent -> R.string.albums_privacy_content
+                            albums -> R.string.albums_privacy
+                            ui.includeContent -> R.string.ai_privacy_content
+                            else -> R.string.ai_privacy_metadata
+                        }
+                    ),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Spacer(Modifier.height(18.dp))
             GradientButton(
-                stringResource(R.string.ai_run),
+                stringResource(if (albums) R.string.albums_run else R.string.ai_run),
                 onClick = onRun,
                 modifier = Modifier.fillMaxWidth(),
-                icon = Icons.Rounded.AutoAwesome,
-                enabled = !ui.preparing && (ui.plan?.estimate?.files ?: 0) > 0,
+                icon = if (albums) Icons.Rounded.PhotoLibrary else Icons.Rounded.AutoAwesome,
+                enabled = !ui.preparing && !blockedByKey && (ui.plan?.estimate?.files ?: 0) > 0,
             )
         }
     }
@@ -162,10 +199,15 @@ private fun EstimateBox(ui: AnalysisSheetUi) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(10.dp))
-                    Text(stringResource(R.string.ai_estimating), style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        if (ui.scope == AnalysisScope.ALBUMS && ui.metaTotal > 0) stringResource(R.string.ai_reading_meta, number(ui.metaDone), number(ui.metaTotal))
+                        else stringResource(R.string.ai_estimating),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
                 }
             } else {
                 EstRow(stringResource(R.string.est_files), number(e.files))
+                if (ui.scope == AnalysisScope.ALBUMS) EstRow(stringResource(R.string.est_albums), number(ui.plan.albumCount))
                 EstRow(stringResource(R.string.est_batches), number(e.batches))
                 EstRow(stringResource(R.string.est_tokens), "${number(e.inputTokens)} / ${number(e.outputTokens)}")
                 Spacer(Modifier.height(6.dp)); Hairline(); Spacer(Modifier.height(6.dp))
